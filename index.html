@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Стилист Екатерина Ерёмина</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #F5F0E8;
+    --warm-white: #FDFAF5;
+    --beige: #E8DDD0;
+    --taupe: #C4B5A0;
+    --brown: #8B7355;
+    --dark: #3D3228;
+    --accent: #A67C5B;
+    --soft-green: #B8C4B0;
+    --serif: 'Cormorant Garamond', serif;
+    --sans: 'Jost', sans-serif;
+  }
+
+  html, body {
+    height: 100%;
+    font-family: var(--sans);
+    background: var(--cream);
+    color: var(--dark);
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--dark);
+    padding: 20px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 300;
+    color: var(--cream);
+    letter-spacing: 0.06em;
+  }
+
+  .logo span {
+    font-style: italic;
+    color: #C4985A;
+  }
+
+  .header-tag {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--taupe);
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    background: var(--dark);
+    color: var(--cream);
+    padding: 96px 48px 80px;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 80%, rgba(166,124,91,.18) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 20%, rgba(184,196,176,.10) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--taupe);
+    margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: #C4985A;
+  }
+
+  .hero-desc {
+    font-size: 14px;
+    color: #9B8B7A;
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.9;
+    position: relative;
+  }
+
+  /* ── DECORATIVE LINE ── */
+  .divider {
+    width: 48px;
+    height: 1px;
+    background: var(--taupe);
+    margin: 32px auto;
+    opacity: 0.5;
+  }
+
+  /* ── CARDS SECTION ── */
+  .cards-section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 72px 24px 80px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+
+  @media (max-width: 640px) {
+    .cards-section { grid-template-columns: 1fr; padding: 48px 20px 64px; }
+    header { padding: 16px 24px; }
+    .hero { padding: 64px 24px 56px; }
+  }
+
+  .card {
+    background: var(--warm-white);
+    border: 1px solid var(--beige);
+    padding: 40px 36px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    text-decoration: none;
+    color: var(--dark);
+    transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+
+  .card:hover {
+    border-color: var(--taupe);
+    box-shadow: 0 8px 32px rgba(61,50,40,.08);
+    transform: translateY(-3px);
+  }
+
+  .card:hover::after {
+    transform: scaleX(1);
+  }
+
+  .card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .card-icon.green  { background: rgba(184,196,176,.25); }
+  .card-icon.accent { background: rgba(166,124,91,.15); }
+
+  .card-label {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--taupe);
+  }
+
+  .card-title {
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 300;
+    line-height: 1.2;
+    color: var(--dark);
+  }
+
+  .card-desc {
+    font-size: 13px;
+    color: var(--brown);
+    line-height: 1.75;
+  }
+
+  .card-cta {
+    margin-top: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .card-cta svg {
+    transition: transform 0.2s;
+  }
+
+  .card:hover .card-cta svg {
+    transform: translateX(4px);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--beige);
+    padding: 28px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--taupe);
+    letter-spacing: 0.06em;
+  }
+
+  @media (max-width: 640px) {
+    footer { padding: 20px 24px; flex-direction: column; gap: 8px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">Екатерина <span>Ерёмина</span></div>
+  <div class="header-tag">Стилист · Имидж-консультант</div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">Рабочие инструменты</div>
+  <h1>Пространство<br><em>стилиста</em></h1>
+  <div class="divider"></div>
+  <p class="hero-desc">Здесь собраны инструменты для работы с клиентами — анкета для знакомства и редактор карты стиля.</p>
+</section>
+
+<!-- CARDS -->
+<section class="cards-section">
+
+  <a class="card" href="questionnaire/">
+    <div class="card-icon green">📋</div>
+    <div class="card-label">Шаг 1</div>
+    <div class="card-title">Заполнить анкету</div>
+    <p class="card-desc">Анкета клиента перед началом работы. Помогает понять запрос, образ жизни и психологический контекст — ещё до первой встречи.</p>
+    <div class="card-cta">
+      Открыть анкету
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </a>
+
+  <a class="card" href="editor/">
+    <div class="card-icon accent">✦</div>
+    <div class="card-label">Шаг 2</div>
+    <div class="card-title">Редактор карты стиля</div>
+    <p class="card-desc">Конструктор карты стиля для стилиста. Создавайте персональные карты с цветовой палитрой, образами и рекомендациями.</p>
+    <div class="card-cta">
+      Открыть редактор
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </a>
+
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2025 Екатерина Ерёмина</span>
+  <span>Стилист · Имидж-консультант</span>
+</footer>
+
+</body>
+</html>

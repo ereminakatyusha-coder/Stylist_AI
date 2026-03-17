@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Анкета клиента — Стилист Екатерина Ерёмина</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--cream:#F5F0E8;--warm-white:#FDFAF5;--beige:#E8DDD0;--taupe:#C4B5A0;--brown:#8B7355;--dark:#3D3228;--accent:#A67C5B;--soft-green:#B8C4B0;--serif:'Cormorant Garamond',serif;--sans:'Jost',sans-serif}
+body{font-family:var(--sans);background:var(--cream);color:var(--dark);min-height:100vh}
+.hero{background:var(--dark);color:var(--cream);padding:56px 40px 48px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 50%,rgba(166,124,91,.15) 0%,transparent 60%);pointer-events:none}
+.hero-eyebrow{font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--taupe);margin-bottom:16px}
+.hero-title{font-family:var(--serif);font-size:clamp(28px,5vw,44px);font-weight:300;line-height:1.15;margin-bottom:16px}
+.hero-title em{font-style:italic;color:#C4985A}
+.hero-desc{font-size:13px;color:#9B8B7A;max-width:480px;margin:0 auto;line-height:1.8}
+.hero-time{display:inline-flex;align-items:center;gap:8px;margin-top:24px;padding:8px 20px;border:1px solid rgba(196,181,160,.3);border-radius:40px;font-size:11px;color:var(--taupe);letter-spacing:.08em}
+.progress-bar-wrap{background:var(--warm-white);border-bottom:1px solid var(--beige);padding:16px 40px;position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:16px}
+.progress-steps{display:flex;gap:6px;flex:1}
+.progress-step{height:3px;flex:1;border-radius:2px;background:var(--beige);transition:background .4s}
+.progress-step.done{background:var(--accent)}
+.progress-step.active{background:var(--soft-green)}
+.progress-label{font-size:11px;color:var(--taupe);letter-spacing:.08em;white-space:nowrap}
+.form-body{max-width:680px;margin:0 auto;padding:48px 24px 80px}
+.block{display:none;animation:fadeIn .4s ease}
+.block.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.block-header{margin-bottom:36px}
+.block-num{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--taupe);margin-bottom:8px}
+.block-title{font-family:var(--serif);font-size:28px;font-weight:300;color:var(--dark);line-height:1.2;margin-bottom:8px}
+.block-sub{font-size:13px;color:var(--brown);line-height:1.7}
+.question{margin-bottom:32px}
+.q-label{font-size:13px;font-weight:500;color:var(--dark);margin-bottom:6px;line-height:1.5}
+.q-hint{font-size:11px;color:var(--taupe);margin-bottom:10px;line-height:1.6;font-style:italic}
+.q-required{color:var(--accent);margin-left:2px}
+input[type=text],input[type=email],textarea{width:100%;background:var(--warm-white);border:1px solid var(--beige);padding:12px 16px;font-family:var(--sans);font-size:14px;color:var(--dark);outline:none;transition:border-color .2s,box-shadow .2s;border-radius:2px;line-height:1.5}
+input:focus,textarea:focus{border-color:var(--taupe);box-shadow:0 0 0 3px rgba(196,181,160,.15)}
+textarea{resize:vertical;min-height:88px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:9px 16px;border:1px solid var(--beige);background:var(--warm-white);font-family:var(--sans);font-size:12px;color:var(--brown);cursor:pointer;border-radius:40px;transition:all .2s;user-select:none}
+.chip:hover{border-color:var(--taupe);background:var(--cream)}
+.chip.selected{background:var(--dark);color:var(--cream);border-color:var(--dark)}
+.scale-track{display:flex;border:1px solid var(--beige);border-radius:2px;overflow:hidden}
+.scale-btn{flex:1;padding:10px 4px;text-align:center;background:var(--warm-white);border:none;border-right:1px solid var(--beige);font-family:var(--sans);font-size:13px;color:var(--taupe);cursor:pointer;transition:all .15s}
+.scale-btn:last-child{border-right:none}
+.scale-btn.selected{background:var(--dark);color:var(--cream)}
+.scale-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--taupe);margin-top:6px}
+.psycho-note{background:var(--warm-white);border-left:3px solid var(--soft-green);padding:16px 20px;margin-bottom:28px;font-size:12px;line-height:1.8;color:var(--brown);border-radius:0 2px 2px 0}
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:40px;padding-top:28px;border-top:1px solid var(--beige)}
+.btn-back{background:transparent;border:1px solid var(--beige);padding:12px 24px;font-family:var(--sans);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--taupe);cursor:pointer;border-radius:2px;transition:all .2s}
+.btn-back:hover{border-color:var(--taupe);color:var(--brown)}
+.btn-next{background:var(--dark);border:none;padding:14px 36px;font-family:var(--sans);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--cream);cursor:pointer;border-radius:2px;transition:all .2s}
+.btn-next:hover{background:var(--accent)}
+.result-wrap{display:none}
+.result-wrap.active{display:block;animation:fadeIn .5s ease}
+.result-hero{text-align:center;padding:48px 0 36px}
+.result-check{width:64px;height:64px;border-radius:50%;background:var(--soft-green);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:24px}
+.result-title{font-family:var(--serif);font-size:32px;font-weight:300;color:var(--dark);margin-bottom:10px}
+.result-sub{font-size:13px;color:var(--brown);line-height:1.7}
+.stylist-summary{background:var(--warm-white);border:1px solid var(--beige);padding:28px 32px;margin-top:32px;border-radius:2px}
+.summary-label{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--taupe);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--beige)}
+.summary-row{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start}
+.summary-key{font-size:11px;color:var(--taupe);min-width:160px;flex-shrink:0;padding-top:1px}
+.summary-val{font-size:13px;color:var(--dark);line-height:1.6;flex:1}
+.profile-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.profile-badge{padding:5px 14px;font-size:11px;border-radius:40px;border:1px solid}
+.badge-trigger{background:#F0EAE2;border-color:var(--beige);color:var(--brown)}
+.badge-service{background:#E8EDF0;border-color:#C8D4DC;color:#5B7A8A}
+.badge-priority{background:#EAF0E8;border-color:#C0D0BC;color:#5A7A58}
+.export-btn{width:100%;margin-top:20px;background:var(--dark);color:var(--cream);border:none;padding:16px;font-family:var(--sans);font-size:12px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:background .2s}
+.export-btn:hover{background:var(--accent)}
+@media(max-width:600px){.hero{padding:40px 20px 36px}.form-body{padding:32px 16px 60px}.progress-bar-wrap{padding:12px 20px}.block-title{font-size:24px}}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-eyebrow">Стилист Екатерина Ерёмина</div>
+  <h1 class="hero-title">Анкета клиента<br><em>перед началом работы</em></h1>
+  <p class="hero-desc">Чем подробнее вы ответите — тем точнее я смогу помочь. Здесь нет правильных и неправильных ответов.</p>
+  <div class="hero-time">⏱ около 7–10 минут</div>
+</div>
+<div class="progress-bar-wrap">
+  <div class="progress-steps">
+    <div class="progress-step active" id="ps1"></div>
+    <div class="progress-step" id="ps2"></div>
+    <div class="progress-step" id="ps3"></div>
+    <div class="progress-step" id="ps4"></div>
+    <div class="progress-step" id="ps5"></div>
+  </div>
+  <div class="progress-label" id="progressLabel">Шаг 1 из 5</div>
+</div>
+<div class="form-body">
+
+<div class="block active" id="block1">
+  <div class="block-header">
+    <div class="block-num">Шаг 1 / 5</div>
+    <h2 class="block-title">Давайте познакомимся</h2>
+    <p class="block-sub">Расскажите немного о себе — это поможет мне лучше вас понять ещё до нашей встречи.</p>
+  </div>
+  <div class="question"><div class="q-label">Ваше имя <span class="q-required">*</span></div><input type="text" id="q_name" placeholder="Как вас зовут?"></div>
+  <div class="question"><div class="q-label">Возраст</div><div class="chips" id="chips_age"><div class="chip" data-val="до 25">до 25</div><div class="chip" data-val="25–34">25–34</div><div class="chip" data-val="35–44">35–44</div><div class="chip" data-val="45–54">45–54</div><div class="chip" data-val="55+">55+</div></div></div>
+  <div class="question"><div class="q-label">Город</div><input type="text" id="q_city" placeholder="Москва, Казань..."></div>
+  <div class="question"><div class="q-label">Какая услуга вас интересует? <span class="q-required">*</span></div><div class="chips" id="chips_service"><div class="chip" data-val="Карта стиля">Карта стиля</div><div class="chip" data-val="Разбор гардероба">Разбор гардероба</div><div class="chip" data-val="Капсульный гардероб">Капсульный гардероб</div><div class="chip" data-val="Анализ внешности">Анализ внешности</div><div class="chip" data-val="Шоппинг">Шоппинг</div><div class="chip" data-val="Консультация">Консультация</div><div class="chip" data-val="Пока не знаю">Пока не знаю</div></div></div>
+  <div class="nav-row"><div></div><button class="btn-next" onclick="goTo(2)">Далее →</button></div>
+</div>
+
+<div class="block" id="block2">
+  <div class="block-header">
+    <div class="block-num">Шаг 2 / 5</div>
+    <h2 class="block-title">Что привело вас ко мне?</h2>
+    <p class="block-sub">Здесь важно говорить честно. Именно это поможет дать вам не просто красивые образы, а то, что реально изменит ваши отношения с гардеробом.</p>
+  </div>
+  <div class="question"><div class="q-label">Что привело вас к стилисту? <span class="q-required">*</span></div><div class="q-hint">Расскажите своими словами — что происходит, что надоело?</div><textarea id="q_trigger" placeholder="Например: каждое утро трачу час на выбор одежды и всё равно чувствую себя не так..."></textarea></div>
+  <div class="question"><div class="q-label">Узнаёте себя? Выберите всё, что откликается</div><div class="chips" id="chips_trigger"><div class="chip" data-val="Стресс каждое утро">Каждое утро — стресс «что надеть»</div><div class="chip" data-val="Полный шкаф — надеть нечего">Полный шкаф, а надеть нечего</div><div class="chip" data-val="Не нравлюсь себе в зеркале">Не нравлюсь себе в зеркале</div><div class="chip" data-val="Хочу перемен — начну с себя">Хочу перемен — начну с себя</div><div class="chip" data-val="Новая работа или роль">Новая работа или роль</div><div class="chip" data-val="Изменилась фигура">Изменилась фигура</div><div class="chip" data-val="Новый этап в жизни">Новый этап в жизни</div><div class="chip" data-val="Просто хочу нравиться себе">Просто хочу нравиться себе</div><div class="chip" data-val="Не понимаю свой стиль">Не понимаю свой стиль</div><div class="chip" data-val="Трачу деньги — и всё не то">Трачу деньги — и всё не то</div></div></div>
+  <div class="question"><div class="q-label">К какому результату хотите прийти?</div><div class="q-hint">Не обязательно про одежду — про ощущение, которое хотите получить</div><textarea id="q_goal" placeholder="Хочу утром одеваться за 5 минут и чувствовать себя уверенно..."></textarea></div>
+  <div class="question"><div class="q-label">Что хотите изменить в своём стиле?</div><textarea id="q_change" placeholder="Быть более привлекательной, более стильной..."></textarea></div>
+  <div class="nav-row"><button class="btn-back" onclick="goTo(1)">← Назад</button><button class="btn-next" onclick="goTo(3)">Далее →</button></div>
+</div>
+
+<div class="block" id="block3">
+  <div class="block-header">
+    <div class="block-num">Шаг 3 / 5</div>
+    <h2 class="block-title">Ваш образ жизни</h2>
+    <p class="block-sub">Одежда должна работать в вашей реальной жизни — не в Instagram, а в конкретных ситуациях каждый день.</p>
+  </div>
+  <div class="question"><div class="q-label">Как выглядит ваша стандартная неделя?</div><div class="q-hint">Где бываете, какие ситуации требуют разной одежды?</div><textarea id="q_lifestyle" placeholder="Пн–пт офис с дресс-кодом, пятница свободный стиль, в выходные дача и встречи с подругами..."></textarea></div>
+  <div class="question"><div class="q-label">В каких ситуациях важно хорошо выглядеть?</div><div class="chips" id="chips_situations"><div class="chip" data-val="Работа / офис">Работа / офис</div><div class="chip" data-val="Деловые встречи">Деловые встречи</div><div class="chip" data-val="Повседневно">Повседневно / дома</div><div class="chip" data-val="Свидания">Свидания</div><div class="chip" data-val="Выходы в свет">Выходы в свет</div><div class="chip" data-val="Спорт">Спорт</div><div class="chip" data-val="Путешествия">Путешествия</div><div class="chip" data-val="Везде важно">Везде важно</div></div></div>
+  <div class="question"><div class="q-label">Дресс-код на работе</div><div class="chips" id="chips_dresscode"><div class="chip" data-val="Строгий деловой">Строгий деловой</div><div class="chip" data-val="Бизнес-кэжуал">Бизнес-кэжуал</div><div class="chip" data-val="Свободный стиль">Свободный стиль</div><div class="chip" data-val="Не хожу в офис">Не хожу в офис</div><div class="chip" data-val="Работаю дома">Работаю дома</div></div></div>
+  <div class="question"><div class="q-label">Бюджет на обновление гардероба</div><div class="chips" id="chips_budget"><div class="chip" data-val="до 30 тыс">до 30 тыс ₽</div><div class="chip" data-val="30–70 тыс">30–70 тыс ₽</div><div class="chip" data-val="70–150 тыс">70–150 тыс ₽</div><div class="chip" data-val="150+ тыс">150+ тыс ₽</div><div class="chip" data-val="Пока не думала">Пока не думала</div></div></div>
+  <div class="question"><div class="q-label">Ограничения, которые важно учесть</div><div class="q-hint">Физические особенности, аллергии, что точно не носите</div><textarea id="q_limits" placeholder="Не ношу синтетику, больные колени — нельзя высокий каблук..."></textarea></div>
+  <div class="nav-row"><button class="btn-back" onclick="goTo(2)">← Назад</button><button class="btn-next" onclick="goTo(4)">Далее →</button></div>
+</div>
+
+<div class="block" id="block4">
+  <div class="block-header">
+    <div class="block-num">Шаг 4 / 5</div>
+    <h2 class="block-title">Вы и ваш стиль</h2>
+    <p class="block-sub">Этот блок — самый важный. Здесь скрываются ответы на вопрос «почему не работает» даже при полном гардеробе.</p>
+  </div>
+  <div class="psycho-note">Здесь нет правильных ответов. Отвечайте первое, что приходит в голову — это важнее обдуманных ответов.</div>
+  <div class="question"><div class="q-label">Как вы себя чувствуете, когда одеваетесь утром?</div><div class="chips" id="chips_morning_feel"><div class="chip" data-val="Раздражение и стресс">Раздражение, стресс</div><div class="chip" data-val="Безразличие">Мне всё равно</div><div class="chip" data-val="Неуверенность">Неуверенность</div><div class="chip" data-val="Привычка без удовольствия">Привычка без удовольствия</div><div class="chip" data-val="Удовольствие иногда">Удовольствие иногда</div><div class="chip" data-val="Радость">Радость каждый день</div></div></div>
+  <div class="question"><div class="q-label">Когда последний раз чувствовали себя «в своей тарелке» в одежде?</div><div class="q-hint">Опишите ситуацию — что на вас было надето, где это было?</div><textarea id="q_best_moment" placeholder="На корпоративе в чёрном платье — все делали комплименты и я сама себе нравилась..."></textarea></div>
+  <div class="question"><div class="q-label">Есть ли части тела, которые хотите скрыть или подчеркнуть?</div><div class="q-hint">Это поможет сразу работать на ваш комфорт</div><textarea id="q_body" placeholder="Хочу скрыть живот, подчеркнуть талию и грудь..."></textarea></div>
+  <div class="question"><div class="q-label">Как, по-вашему, вас воспринимают окружающие?</div><div class="chips" id="chips_perception"><div class="chip" data-val="Строгая / деловая">Строгая / деловая</div><div class="chip" data-val="Мягкая / домашняя">Мягкая / домашняя</div><div class="chip" data-val="Скромная / незаметная">Скромная / незаметная</div><div class="chip" data-val="Яркая / стильная">Яркая / стильная</div><div class="chip" data-val="Спортивная">Спортивная</div><div class="chip" data-val="Не знаю">Не знаю</div></div></div>
+  <div class="question"><div class="q-label">Какой образ хотите транслировать?</div><div class="q-hint">Как хотите, чтобы вас воспринимали?</div><div class="chips" id="chips_desired"><div class="chip" data-val="Уверенная / сильная">Уверенная / сильная</div><div class="chip" data-val="Элегантная / женственная">Элегантная / женственная</div><div class="chip" data-val="Успешная / статусная">Успешная / статусная</div><div class="chip" data-val="Привлекательная">Привлекательная</div><div class="chip" data-val="Творческая / яркая">Творческая / яркая</div><div class="chip" data-val="Спокойная / гармоничная">Спокойная / гармоничная</div><div class="chip" data-val="Молодая / свежая">Молодая / свежая</div></div></div>
+  <div class="question">
+    <div class="q-label">Оцените ваши отношения с собственным телом сейчас</div>
+    <div class="scale-track" id="scale_body">
+      <button class="scale-btn" onclick="setScale('scale_body',1)">1</button><button class="scale-btn" onclick="setScale('scale_body',2)">2</button><button class="scale-btn" onclick="setScale('scale_body',3)">3</button><button class="scale-btn" onclick="setScale('scale_body',4)">4</button><button class="scale-btn" onclick="setScale('scale_body',5)">5</button><button class="scale-btn" onclick="setScale('scale_body',6)">6</button><button class="scale-btn" onclick="setScale('scale_body',7)">7</button><button class="scale-btn" onclick="setScale('scale_body',8)">8</button><button class="scale-btn" onclick="setScale('scale_body',9)">9</button><button class="scale-btn" onclick="setScale('scale_body',10)">10</button>
+    </div>
+    <div class="scale-labels"><span>Не принимаю себя</span><span>Люблю своё тело</span></div>
+  </div>
+  <div class="question"><div class="q-label">Был ли период, когда вы чувствовали себя красивой и уверенной?</div><textarea id="q_peak" placeholder="Да, лет 5 назад после похудения я чувствовала себя потрясающе..."></textarea></div>
+  <div class="nav-row"><button class="btn-back" onclick="goTo(3)">← Назад</button><button class="btn-next" onclick="goTo(5)">Далее →</button></div>
+</div>
+
+<div class="block" id="block5">
+  <div class="block-header">
+    <div class="block-num">Шаг 5 / 5</div>
+    <h2 class="block-title">Вкус и референсы</h2>
+    <p class="block-sub">Расскажите о предпочтениях — это поможет сразу говорить с вами на одном языке.</p>
+  </div>
+  <div class="question"><div class="q-label">Есть женщина, чей стиль вам нравится?</div><div class="q-hint">Знаменитость, блогер, подруга — кто угодно</div><input type="text" id="q_icon" placeholder="Кэмерон Диас, Натали Портман..."></div>
+  <div class="question"><div class="q-label">Какие цвета носите чаще всего?</div><div class="chips" id="chips_colors"><div class="chip" data-val="Чёрный / серый">Чёрный / серый</div><div class="chip" data-val="Белый / молочный">Белый / молочный</div><div class="chip" data-val="Бежевый / коричневый">Бежевый / коричневый</div><div class="chip" data-val="Синий / голубой">Синий / голубой</div><div class="chip" data-val="Зелёный">Зелёный</div><div class="chip" data-val="Красный / бордо">Красный / бордо</div><div class="chip" data-val="Яркие разные">Яркие, разные</div></div></div>
+  <div class="question"><div class="q-label">Какие цвета никогда не наденете?</div><input type="text" id="q_no_colors" placeholder="Жёлтый, оранжевый..."></div>
+  <div class="question"><div class="q-label">Какой стиль вам ближе?</div><div class="chips" id="chips_style_pref"><div class="chip" data-val="Классика / деловой">Классика / деловой</div><div class="chip" data-val="Casual / повседневный">Casual</div><div class="chip" data-val="Женственный / романтичный">Женственный</div><div class="chip" data-val="Минимализм">Минимализм</div><div class="chip" data-val="Бохо / натуральный">Бохо / натуральный</div><div class="chip" data-val="Яркий / экспрессивный">Яркий</div><div class="chip" data-val="Ищу себя">Ищу себя</div></div></div>
+  <div class="question"><div class="q-label">Любимые бренды или маркетплейсы</div><input type="text" id="q_brands" placeholder="Maje, Sandro, Zara, Lamoda..."></div>
+  <div class="question"><div class="q-label">Носите каблуки?</div><div class="chips" id="chips_heels"><div class="chip" data-val="Да, часто">Да, часто</div><div class="chip" data-val="Только на выход">Только на выход</div><div class="chip" data-val="Редко">Редко</div><div class="chip" data-val="Нет">Нет</div></div></div>
+  <div class="question"><div class="q-label">Что-то ещё важное?</div><textarea id="q_extra" placeholder="Любые мысли, пожелания, страхи — всё важно..."></textarea></div>
+  <div class="question"><div class="q-label">Ваш контакт для связи <span class="q-required">*</span></div><div class="q-hint">Телефон или email</div><input type="text" id="q_contact" placeholder="+7 900 000 00 00 или email@mail.ru"></div>
+  <div class="nav-row"><button class="btn-back" onclick="goTo(4)">← Назад</button><button class="btn-next" onclick="submitForm()">Отправить анкету ✓</button></div>
+</div>
+
+<div class="result-wrap" id="resultBlock">
+  <div class="result-hero">
+    <div class="result-check">✓</div>
+    <h2 class="result-title">Анкета получена!</h2>
+    <p class="result-sub">Спасибо, <strong id="resultName"></strong>. Я изучу ваши ответы и напишу вам в течение 24 часов.</p>
+  </div>
+  <div class="stylist-summary">
+    <div class="summary-label">Карточка клиента — для стилиста</div>
+    <div class="summary-row"><div class="summary-key">Имя / контакт</div><div class="summary-val" id="sum_name">—</div></div>
+    <div class="summary-row"><div class="summary-key">Услуга</div><div class="summary-val" id="sum_service">—</div></div>
+    <div class="summary-row"><div class="summary-key">Главный запрос</div><div class="summary-val" id="sum_trigger">—</div></div>
+    <div class="summary-row"><div class="summary-key">Цель</div><div class="summary-val" id="sum_goal">—</div></div>
+    <div class="summary-row"><div class="summary-key">Образ жизни</div><div class="summary-val" id="sum_lifestyle">—</div></div>
+    <div class="summary-row"><div class="summary-key">Отношения с телом</div><div class="summary-val" id="sum_body">—</div></div>
+    <div class="summary-row"><div class="summary-key">Желаемый образ</div><div class="summary-val" id="sum_desired">—</div></div>
+    <div class="summary-row"><div class="summary-key">Бюджет</div><div class="summary-val" id="sum_budget">—</div></div>
+    <div class="summary-row"><div class="summary-key">Ограничения</div><div class="summary-val" id="sum_limits">—</div></div>
+    <div style="margin-top:16px"><div class="summary-label">Профиль клиента</div><div class="profile-badges" id="profileBadges"></div></div>
+    <div style="margin-top:16px"><div class="summary-label">Психологический контекст</div><div class="summary-val" id="sum_psycho" style="font-size:13px;line-height:1.8">—</div></div>
+    <button class="export-btn" onclick="exportClientJSON()">↓ Экспорт JSON → открыть в редакторе карты стиля</button>
+  </div>
+</div>
+
+</div>
+<script>
+document.querySelectorAll('.chips').forEach(function(c){
+  var single=['chips_age','chips_dresscode','chips_budget','chips_morning_feel','chips_heels','chips_service'].includes(c.id);
+  c.querySelectorAll('.chip').forEach(function(chip){
+    chip.addEventListener('click',function(){
+      if(single)c.querySelectorAll('.chip').forEach(function(x){x.classList.remove('selected')});
+      chip.classList.toggle('selected');
+    });
+  });
+});
+var scaleVals={};
+function setScale(id,val){
+  scaleVals[id]=val;
+  document.querySelectorAll('#'+id+' .scale-btn').forEach(function(b,i){b.classList.toggle('selected',i+1<=val)});
+}
+var cur=1;
+function goTo(n){
+  document.getElementById('block'+cur).classList.remove('active');
+  cur=n;document.getElementById('block'+n).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  for(var i=1;i<=5;i++){var el=document.getElementById('ps'+i);el.className='progress-step'+(i<n?' done':i===n?' active':'')}
+  document.getElementById('progressLabel').textContent='Шаг '+n+' из 5';
+}
+function gc(id){return[...document.querySelectorAll('#'+id+' .chip.selected')].map(function(c){return c.dataset.val}).join(', ')}
+function v(id){return(document.getElementById(id)||{}).value||''}
+function buildProfile(){
+  var tr=gc('chips_trigger'),bs=scaleVals['scale_body']||0,mo=gc('chips_morning_feel'),de=gc('chips_desired');
+  var tags=[],notes=[];
+  if(tr.includes('Новый этап')||tr.includes('Хочу перемен')){tags.push({t:'Жизненный переход',c:'badge-trigger'});notes.push('Клиент переживает смену идентичности — стиль нужен как инструмент нового «я».')}
+  if(tr.includes('Новая работа')){tags.push({t:'Смена роли',c:'badge-trigger'});notes.push('Помочь выстроить профессиональный образ под новый контекст.')}
+  if(tr.includes('Не нравлюсь себе')||bs<=4){tags.push({t:'Работа с телесностью',c:'badge-trigger'});notes.push('Низкий телесный контакт — работать бережно, фокус на «подчеркнуть», а не «скрыть».')}
+  if(tr.includes('Полный шкаф')){tags.push({t:'Хаос в гардеробе',c:'badge-trigger'});notes.push('Много вещей без системы — нужна ревизия и капсульная логика.')}
+  if(tr.includes('Трачу деньги')){tags.push({t:'Усталость от покупок',c:'badge-trigger'});notes.push('Объяснить принцип выбора, а не просто дать список.')}
+  if(mo.includes('Раздражение')||mo.includes('Неуверенность')){tags.push({t:'Утренний стресс',c:'badge-priority'});notes.push('Ключевая боль — утренний ритуал. Готовые комплекты приоритетны.')}
+  if(de.includes('Уверенная')||de.includes('Успешная')){tags.push({t:'Запрос на силу',c:'badge-service'});notes.push('Хочет транслировать силу — структура, качество, минимализм.')}
+  if(de.includes('Привлекательная')||de.includes('Элегантная')){tags.push({t:'Запрос на женственность',c:'badge-service'});notes.push('Важна чувственность и женственность в образах.')}
+  var svc=gc('chips_service');if(svc)tags.push({t:svc,c:'badge-service'});
+  var bud=gc('chips_budget');if(bud)tags.push({t:'Бюджет: '+bud,c:'badge-service'});
+  return{tags:tags,notes:notes.join(' ')||'Заполните анкету полностью для профилирования.'};
+}
+function submitForm(){
+  document.getElementById('block5').classList.remove('active');
+  document.getElementById('resultBlock').classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  document.querySelectorAll('.progress-step').forEach(function(s){s.className='progress-step done'});
+  document.getElementById('progressLabel').textContent='Готово ✓';
+  var name=v('q_name')||'клиент';
+  document.getElementById('resultName').textContent=name;
+  document.getElementById('sum_name').textContent=name+' · '+v('q_contact');
+  document.getElementById('sum_service').textContent=gc('chips_service')||'—';
+  document.getElementById('sum_trigger').textContent=v('q_trigger')||gc('chips_trigger')||'—';
+  document.getElementById('sum_goal').textContent=v('q_goal')||'—';
+  document.getElementById('sum_lifestyle').textContent=v('q_lifestyle')||gc('chips_situations')||'—';
+  document.getElementById('sum_body').textContent=(scaleVals['scale_body']||'—')+'/10'+(v('q_body')?' · '+v('q_body'):'');
+  document.getElementById('sum_desired').textContent=gc('chips_desired')||'—';
+  document.getElementById('sum_budget').textContent=gc('chips_budget')||'—';
+  document.getElementById('sum_limits').textContent=v('q_limits')||'не указано';
+  var p=buildProfile();
+  document.getElementById('profileBadges').innerHTML=p.tags.map(function(t){return'<span class="profile-badge '+t.c+'">'+t.t+'</span>'}).join('');
+  document.getElementById('sum_psycho').textContent=p.notes;
+}
+function exportClientJSON(){
+  var p=buildProfile();
+  var data={meta:{client:v('q_name'),contact:v('q_contact'),city:v('q_city'),age:gc('chips_age'),service:gc('chips_service'),date:new Date().toISOString().split('T')[0],stylist:'Екатерина Ерёмина'},intake:{trigger:v('q_trigger'),trigger_tags:gc('chips_trigger'),goal:v('q_goal'),what_to_change:v('q_change')},lifestyle:{description:v('q_lifestyle'),situations:gc('chips_situations'),dresscode:gc('chips_dresscode'),budget:gc('chips_budget'),limits:v('q_limits')},psychology:{morning_feeling:gc('chips_morning_feel'),best_moment:v('q_best_moment'),body_notes:v('q_body'),body_score:scaleVals['scale_body']||null,current_perception:gc('chips_perception'),desired_image:gc('chips_desired'),peak_period:v('q_peak')},preferences:{style_icon:v('q_icon'),colors_worn:gc('chips_colors'),colors_avoid:v('q_no_colors'),style_preference:gc('chips_style_pref'),brands:v('q_brands'),heels:gc('chips_heels'),extra:v('q_extra')},profile_tags:p.tags.map(function(t){return t.t}),profile_notes:p.notes};
+  var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='client-'+(v('q_name')||'noname').replace(/\s+/g,'-').toLowerCase()+'.json';a.click();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1938 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Карта стиля — инструмент стилиста</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #F5F0E8;
+    --warm-white: #FDFAF5;
+    --beige: #E8DDD0;
+    --taupe: #C4B5A0;
+    --brown: #8B7355;
+    --dark: #3D3228;
+    --accent: #A67C5B;
+    --soft-green: #B8C4B0;
+    --soft-rose: #D4A9A0;
+    --serif: 'Cormorant Garamond', serif;
+    --sans: 'Jost', sans-serif;
+  }
+
+  body {
+    font-family: var(--sans);
+    background: var(--cream);
+    color: var(--dark);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* TOP BAR */
+  .topbar {
+    background: var(--dark);
+    color: var(--cream);
+    padding: 12px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .topbar-title { font-family: var(--serif); font-size: 16px; letter-spacing: 0.06em; font-weight: 300; }
+  .topbar-actions { display: flex; gap: 12px; }
+  .btn {
+    padding: 7px 18px;
+    border: 1px solid var(--taupe);
+    background: transparent;
+    color: var(--cream);
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn:hover { background: var(--accent); border-color: var(--accent); }
+  .btn-primary { background: var(--accent); border-color: var(--accent); }
+
+  /* LAYOUT */
+  .workspace {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    flex: 1;
+    overflow: hidden;
+    height: calc(100vh - 48px);
+  }
+
+  /* LEFT PANEL — EDITOR */
+  .editor {
+    background: var(--warm-white);
+    border-right: 1px solid var(--beige);
+    overflow-y: auto;
+    padding: 28px 24px;
+  }
+  .editor::-webkit-scrollbar { width: 4px; }
+  .editor::-webkit-scrollbar-track { background: transparent; }
+  .editor::-webkit-scrollbar-thumb { background: var(--beige); border-radius: 2px; }
+
+  .section-label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--taupe);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--beige);
+  }
+
+  .field-group { margin-bottom: 24px; }
+  .field-group + .section-label { margin-top: 8px; }
+
+  label {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--brown);
+    margin-bottom: 6px;
+  }
+
+  input[type="text"], input[type="date"], textarea, select {
+    width: 100%;
+    background: var(--cream);
+    border: 1px solid var(--beige);
+    padding: 9px 12px;
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--dark);
+    outline: none;
+    transition: border-color 0.2s;
+    border-radius: 2px;
+    resize: none;
+  }
+  input:focus, textarea:focus, select:focus { border-color: var(--taupe); }
+
+  textarea { min-height: 72px; line-height: 1.6; }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  /* Swatch editor */
+  .swatch-editor { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+  .swatch-item {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--cream);
+    border: 1px solid var(--beige);
+    padding: 5px 10px 5px 6px;
+    border-radius: 2px;
+    font-size: 11px;
+  }
+  .swatch-color {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.1);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .swatch-color input[type="color"] {
+    width: 100%; height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    padding: 0;
+    border: none;
+  }
+  .swatch-name { font-size: 11px; color: var(--dark); min-width: 60px; }
+  .swatch-name input { background: transparent; border: none; padding: 0; font-size: 11px; }
+  .swatch-remove { color: var(--taupe); cursor: pointer; font-size: 13px; line-height: 1; margin-left: 4px; }
+  .swatch-remove:hover { color: var(--soft-rose); }
+  .add-swatch-btn {
+    background: transparent;
+    border: 1px dashed var(--taupe);
+    padding: 5px 12px;
+    font-size: 11px;
+    color: var(--taupe);
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+    font-family: var(--sans);
+  }
+  .add-swatch-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Avoid list editor */
+  .tag-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .tag {
+    background: #F0EAE2;
+    border: 1px solid var(--beige);
+    padding: 4px 10px;
+    font-size: 11px;
+    border-radius: 2px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .tag span { cursor: pointer; color: var(--taupe); }
+  .tag span:hover { color: var(--soft-rose); }
+  .tag-input-row { display: flex; gap: 6px; margin-top: 6px; }
+  .tag-input-row input { flex: 1; }
+  .tag-add-btn {
+    padding: 0 14px;
+    background: var(--dark);
+    color: var(--cream);
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 2px;
+  }
+
+  /* Outfit items */
+  .outfit-list { display: flex; flex-direction: column; gap: 6px; }
+  .outfit-item { display: flex; gap: 6px; }
+  .outfit-item input { flex: 1; }
+  .outfit-item button {
+    padding: 0 10px;
+    background: transparent;
+    border: 1px solid var(--beige);
+    color: var(--taupe);
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 2px;
+  }
+  .outfit-item button:hover { border-color: var(--soft-rose); color: var(--soft-rose); }
+  .add-outfit-btn {
+    margin-top: 6px;
+    background: transparent;
+    border: 1px dashed var(--taupe);
+    padding: 6px;
+    width: 100%;
+    font-size: 11px;
+    color: var(--taupe);
+    cursor: pointer;
+    border-radius: 2px;
+    font-family: var(--sans);
+    letter-spacing: 0.08em;
+    transition: all 0.2s;
+  }
+  .add-outfit-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* RIGHT PANEL — PREVIEW */
+  .preview {
+    overflow-y: auto;
+    background: #EFEBE3;
+    padding: 40px;
+  }
+  .preview::-webkit-scrollbar { width: 4px; }
+  .preview::-webkit-scrollbar-thumb { background: var(--beige); }
+
+  /* STYLE CARD */
+  .style-card {
+    background: var(--warm-white);
+    max-width: 680px;
+    margin: 0 auto;
+    box-shadow: 0 4px 40px rgba(61,50,40,0.08);
+  }
+
+  /* Cover */
+  .card-cover {
+    background: var(--cream);
+    padding: 48px 48px 36px;
+    border-bottom: 1px solid var(--beige);
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+    position: relative;
+    overflow: hidden;
+  }
+  .card-cover::before {
+    content: '';
+    position: absolute;
+    right: -40px; top: -40px;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(180,196,176,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .cover-photo {
+    width: 110px; height: 140px;
+    object-fit: cover;
+    border-radius: 2px;
+    flex-shrink: 0;
+    background: var(--beige);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; color: var(--taupe); text-align: center;
+    border: 1px solid var(--beige);
+  }
+  .cover-photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 2px; }
+  .cover-text { flex: 1; }
+  .cover-service {
+    font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--taupe); margin-bottom: 10px;
+  }
+  .cover-name {
+    font-family: var(--serif);
+    font-size: 34px; font-weight: 300; line-height: 1.1;
+    color: var(--dark); margin-bottom: 6px;
+  }
+  .cover-name em { font-style: italic; color: var(--accent); }
+  .cover-subtitle {
+    font-size: 11px; color: var(--taupe); letter-spacing: 0.05em;
+    margin-bottom: 20px; line-height: 1.6;
+  }
+  .cover-divider {
+    width: 40px; height: 1px; background: var(--taupe); margin-bottom: 16px;
+  }
+  .cover-meta { font-size: 10px; color: var(--taupe); letter-spacing: 0.08em; line-height: 1.8; }
+
+  /* Sections */
+  .card-section {
+    padding: 36px 48px;
+    border-bottom: 1px solid var(--beige);
+  }
+  .card-section:last-child { border-bottom: none; }
+  .section-title {
+    font-family: var(--serif);
+    font-size: 20px; font-weight: 300;
+    color: var(--dark); text-align: center;
+    margin-bottom: 28px;
+    letter-spacing: 0.02em;
+  }
+
+  /* Color type block */
+  .colortype-block {
+    display: grid; grid-template-columns: auto auto 1fr; gap: 20px; align-items: start;
+  }
+  .client-mini-photo {
+    width: 70px; height: 88px;
+    object-fit: cover; border-radius: 2px;
+    background: var(--beige);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; color: var(--taupe); text-align: center;
+  }
+  .client-mini-photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 2px; }
+  .palette-mini { display: flex; flex-direction: column; gap: 3px; }
+  .palette-mini-swatch { width: 28px; height: 14px; border-radius: 1px; }
+  .colortype-info { }
+  .colortype-name {
+    font-family: var(--serif); font-size: 20px; font-weight: 600;
+    color: var(--dark); margin-bottom: 4px;
+  }
+  .colortype-quote {
+    font-family: var(--serif); font-style: italic; font-size: 14px;
+    color: var(--accent); margin-bottom: 10px;
+  }
+  .colortype-desc { font-size: 12px; line-height: 1.7; color: #6B5B4E; }
+
+  /* Palette */
+  .palette-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 4px; }
+  .palette-column { }
+  .palette-col-title {
+    font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--taupe); margin-bottom: 10px; text-align: center;
+  }
+  .palette-swatches { display: flex; flex-direction: column; gap: 4px; }
+  .palette-swatch-row { display: flex; align-items: center; gap: 8px; }
+  .palette-swatch-circle { width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.08); }
+  .palette-swatch-label { font-size: 11px; color: var(--dark); }
+  .avoid-swatches { }
+  .avoid-swatch-row { display: flex; align-items: center; gap: 8px; opacity: 0.7; }
+  .avoid-cross { font-size: 10px; color: var(--soft-rose); font-weight: 500; margin-right: 2px; }
+  .avoid-swatch-label { font-size: 11px; color: #9B7E6E; text-decoration: line-through; }
+
+  /* Figure */
+  .figure-block { display: flex; gap: 24px; align-items: flex-start; }
+  .figure-photo {
+    width: 120px; flex-shrink: 0;
+    background: var(--beige); border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: var(--taupe); text-align: center;
+    min-height: 160px; overflow: hidden;
+    border: 1px solid var(--beige);
+  }
+  .figure-photo img { width: 100%; height: 100%; object-fit: cover; }
+  .figure-info { flex: 1; }
+  .figure-type-name {
+    font-family: var(--serif); font-size: 20px; font-weight: 600;
+    color: var(--dark); margin-bottom: 6px;
+  }
+  .figure-type-sub {
+    font-family: var(--serif); font-style: italic; font-size: 13px;
+    color: var(--accent); margin-bottom: 12px;
+  }
+  .figure-desc { font-size: 12px; line-height: 1.8; color: #6B5B4E; margin-bottom: 14px; }
+  .rec-list { list-style: none; padding: 0; }
+  .rec-list li {
+    font-size: 11px; color: var(--dark); padding: 4px 0;
+    border-bottom: 1px solid var(--beige); display: flex; align-items: flex-start; gap: 8px;
+  }
+  .rec-list li::before { content: '—'; color: var(--taupe); flex-shrink: 0; }
+
+  /* Archetype */
+  .archetype-block {
+    background: var(--cream);
+    padding: 28px 32px; border-radius: 2px;
+    text-align: center; margin-bottom: 20px;
+  }
+  .archetype-name {
+    font-family: var(--serif); font-size: 26px; font-weight: 300;
+    color: var(--dark); margin-bottom: 6px; letter-spacing: 0.02em;
+  }
+  .archetype-sub {
+    font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--taupe);
+  }
+  .archetype-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 16px; }
+  .archetype-col { text-align: left; }
+  .archetype-col-title {
+    font-family: var(--serif); font-size: 14px; font-weight: 600;
+    color: var(--dark); margin-bottom: 8px;
+  }
+  .archetype-col p { font-size: 12px; line-height: 1.8; color: #6B5B4E; }
+
+  /* Outfits */
+  .outfits-list { display: flex; flex-direction: column; gap: 10px; }
+  .outfit-card {
+    background: var(--cream);
+    padding: 14px 18px;
+    border-radius: 2px;
+    border-left: 3px solid var(--soft-green);
+    font-size: 12px; color: var(--dark); line-height: 1.6;
+  }
+  .outfit-num {
+    font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--taupe); margin-bottom: 4px;
+  }
+
+  /* Hairstyle */
+  .hair-block { display: flex; gap: 24px; align-items: flex-start; }
+  .hair-photo {
+    width: 100px; flex-shrink: 0; min-height: 120px;
+    background: var(--beige); border-radius: 2px; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: var(--taupe); text-align: center;
+    border: 1px solid var(--beige);
+  }
+  .hair-photo img { width: 100%; height: 100%; object-fit: cover; }
+  .hair-info { flex: 1; }
+  .hair-type-name { font-family: var(--serif); font-size: 20px; font-weight: 600; color: var(--dark); margin-bottom: 6px; }
+  .hair-type-sub { font-family: var(--serif); font-style: italic; font-size: 13px; color: var(--accent); margin-bottom: 10px; }
+  .hair-desc { font-size: 12px; line-height: 1.8; color: #6B5B4E; margin-bottom: 12px; }
+  .hair-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .hair-tag {
+    padding: 4px 12px; background: var(--cream);
+    border: 1px solid var(--beige); border-radius: 40px;
+    font-size: 11px; color: var(--brown);
+  }
+
+  /* Shopping list */
+  .shop-categories { display: flex; flex-direction: column; gap: 16px; }
+  .shop-category { }
+  .shop-cat-title {
+    font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--taupe); margin-bottom: 8px; padding-bottom: 6px;
+    border-bottom: 1px solid var(--beige);
+  }
+  .shop-items { display: flex; flex-direction: column; gap: 4px; }
+  .shop-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 8px 12px; background: var(--cream); border-radius: 2px;
+    font-size: 12px; color: var(--dark);
+  }
+  .shop-item-priority {
+    width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+  }
+  .priority-must { background: var(--accent); }
+  .priority-want { background: var(--soft-green); }
+  .priority-later { background: var(--beige); }
+  .shop-item-name { flex: 1; }
+  .shop-item-price { font-size: 11px; color: var(--taupe); white-space: nowrap; }
+  .shop-item-link { font-size: 10px; color: var(--accent); text-decoration: none; }
+  .shop-item-link:hover { text-decoration: underline; }
+  .shop-legend { display: flex; gap: 16px; margin-bottom: 16px; }
+  .shop-legend-item { display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--taupe); }
+
+  /* Styling goals */
+  .goals-list { display: flex; flex-direction: column; gap: 8px; }
+  .goal-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 14px; background: var(--cream); border-radius: 2px;
+    font-size: 12px; color: var(--dark); line-height: 1.6;
+  }
+  .goal-bullet { width: 6px; height: 6px; border-radius: 50%; background: var(--soft-green); flex-shrink: 0; margin-top: 6px; }
+
+  /* Kibbi typology */
+  .kibbi-block { display: grid; grid-template-columns: 120px 1fr auto; gap: 24px; align-items: start; }
+  .kibbi-illustration {
+    width: 120px; min-height: 150px; background: var(--beige); border-radius: 2px;
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: var(--taupe); text-align: center; border: 1px solid var(--beige);
+  }
+  .kibbi-illustration img { width: 100%; height: 100%; object-fit: cover; }
+  .kibbi-info { }
+  .kibbi-system { font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--taupe); margin-bottom: 6px; }
+  .kibbi-name { font-family: var(--serif); font-size: 22px; font-weight: 600; color: var(--dark); margin-bottom: 6px; }
+  .kibbi-name-en { font-family: var(--serif); font-style: italic; font-size: 14px; color: var(--accent); margin-bottom: 10px; }
+  .kibbi-desc { font-size: 12px; line-height: 1.8; color: #6B5B4E; }
+  .kibbi-collage {
+    width: 160px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; flex-shrink: 0;
+  }
+  .kibbi-collage-item {
+    aspect-ratio: 1; background: var(--beige); border-radius: 2px; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; color: var(--taupe);
+  }
+  .kibbi-collage-item img { width: 100%; height: 100%; object-fit: cover; }
+  .kibbi-collage-item.wide { grid-column: span 2; aspect-ratio: 2/1; }
+
+  /* Hair color block */
+  .hair-color-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+  .hair-color-col { }
+  .hair-color-title { font-size: 12px; font-weight: 500; color: var(--dark); margin-bottom: 10px; }
+  .hair-color-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 5px; }
+  .hair-color-list li { display: flex; align-items: flex-start; gap: 8px; font-size: 11px; color: var(--dark); line-height: 1.5; }
+  .hair-color-list li::before { content: '—'; color: var(--soft-green); flex-shrink: 0; }
+  .hair-color-list.avoid li::before { content: '✕'; color: var(--soft-rose); }
+  .hair-quote-circle {
+    grid-column: span 2; margin-top: 4px;
+    border: 1.5px solid var(--soft-green); border-radius: 50%;
+    width: 180px; height: 180px; display: flex; align-items: center; justify-content: center;
+    text-align: center; padding: 20px; margin: 12px auto 0;
+    position: relative;
+  }
+  .hair-quote-circle::before { content: '\201C\201C'; font-family: var(--serif); font-size: 28px; color: var(--soft-green); position: absolute; top: 12px; left: 20px; line-height: 1; }
+  .hair-quote-circle::after { content: '\201D\201D'; font-family: var(--serif); font-size: 28px; color: var(--soft-green); position: absolute; bottom: 12px; right: 20px; line-height: 1; }
+  .hair-quote-text { font-size: 11px; color: var(--brown); line-height: 1.7; font-style: italic; }
+
+  /* Fashion examples grid */
+  .fashion-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .fashion-item {
+    width: calc(25% - 6px); aspect-ratio: 2/3; background: var(--beige);
+    border-radius: 2px; overflow: hidden; position: relative; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: var(--taupe);
+  }
+  .fashion-item img { width: 100%; height: 100%; object-fit: cover; }
+  .fashion-add {
+    border: 1.5px dashed var(--taupe); background: transparent;
+    cursor: pointer; transition: all 0.2s; font-size: 20px; color: var(--taupe);
+  }
+  .fashion-add:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Moodboard */
+  .moodboard-wrap { }
+  .moodboard-title-block { display: flex; gap: 24px; align-items: flex-start; margin-bottom: 16px; }
+  .moodboard-name { font-family: var(--serif); font-size: 32px; font-weight: 300; color: var(--dark); line-height: 1.1; }
+  .moodboard-divider { width: 1px; background: var(--beige); align-self: stretch; }
+  .moodboard-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 120px; gap: 6px; }
+  .moodboard-cell {
+    background: var(--beige); border-radius: 4px; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: var(--taupe); cursor: pointer; transition: opacity 0.2s;
+    position: relative;
+  }
+  .moodboard-cell img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
+  .moodboard-cell.tall { grid-row: span 2; }
+  .moodboard-cell.wide { grid-column: span 2; }
+  .moodboard-cell-add {
+    border: 1.5px dashed var(--taupe); background: transparent;
+    font-size: 20px; color: var(--taupe); cursor: pointer;
+  }
+  .moodboard-cell-add:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* AI PANEL */
+  .ai-panel {
+    background: linear-gradient(135deg, #2A1F18 0%, #3D2E22 100%);
+    border-bottom: 1px solid #5C4030;
+    padding: 20px 24px;
+  }
+  .ai-panel-title {
+    font-family: var(--serif); font-size: 15px; font-weight: 300;
+    color: #F0EDE6; letter-spacing: 0.04em; margin-bottom: 4px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .ai-spark { font-size: 16px; }
+  .ai-panel-sub { font-size: 10px; color: #9B8B7A; letter-spacing: 0.08em; margin-bottom: 16px; }
+  .ai-photo-row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .ai-photo-slot {
+    flex: 1; border: 1px dashed #5C4030; border-radius: 2px;
+    padding: 10px 8px; text-align: center; cursor: pointer;
+    font-size: 10px; color: #9B8B7A; letter-spacing: 0.06em;
+    transition: all 0.2s; background: rgba(255,255,255,0.03);
+    position: relative; overflow: hidden; min-height: 64px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  }
+  .ai-photo-slot:hover { border-color: #C4985A; color: #C4985A; }
+  .ai-photo-slot.has-photo { border-color: #7A9B8A; border-style: solid; }
+  .ai-photo-slot img { width: 100%; height: 56px; object-fit: cover; border-radius: 1px; }
+  .ai-photo-slot input { display: none; }
+  .ai-photo-icon { font-size: 18px; opacity: 0.5; }
+  .ai-generate-btn {
+    width: 100%; padding: 12px;
+    background: linear-gradient(135deg, #C4985A, #A67C5B);
+    border: none; color: #FDF8F0;
+    font-family: var(--sans); font-size: 11px; letter-spacing: 0.14em;
+    text-transform: uppercase; cursor: pointer; border-radius: 2px;
+    transition: all 0.2s; position: relative; overflow: hidden;
+  }
+  .ai-generate-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+  .ai-generate-btn:disabled { background: #4A3828; color: #6B5B4E; cursor: default; transform: none; }
+  .ai-generate-btn.loading::after {
+    content: ''; position: absolute; left: 0; top: 0; height: 100%;
+    width: var(--progress, 0%); background: rgba(255,255,255,0.15);
+    transition: width 0.3s;
+  }
+  .ai-status {
+    margin-top: 10px; font-size: 10px; color: #9B8B7A;
+    letter-spacing: 0.06em; min-height: 14px; text-align: center;
+  }
+  .ai-status.ok { color: #7A9B8A; }
+  .ai-status.err { color: #C4A098; }
+  .ai-sections {
+    margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .ai-section-chip {
+    padding: 4px 10px; border: 1px solid #5C4030; border-radius: 40px;
+    font-size: 10px; color: #9B8B7A; cursor: pointer; transition: all 0.15s;
+    background: transparent; font-family: var(--sans);
+  }
+  .ai-section-chip.on { background: rgba(196,152,90,0.2); border-color: #C4985A; color: #C4985A; }
+  .ai-divider { height: 1px; background: #3D2E22; margin: 16px 0 12px; }
+  .ai-key-row { display: flex; gap: 6px; align-items: center; }
+  .ai-key-input {
+    flex: 1; background: rgba(255,255,255,0.05); border: 1px solid #5C4030;
+    padding: 7px 10px; font-family: var(--sans); font-size: 11px; color: #C2B8AE;
+    outline: none; border-radius: 2px; letter-spacing: 0.04em;
+  }
+  .ai-key-input:focus { border-color: #C4985A; }
+  .ai-key-label { font-size: 9px; color: #6B5B4E; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 5px; }
+
+  /* Import banner */
+  .import-banner {
+    background: #EAF0E8; border: 1px solid #C0D0BC;
+    padding: 10px 14px; border-radius: 2px; margin-bottom: 16px;
+    font-size: 11px; color: #5A7A58; display: none;
+  }
+  .import-banner.visible { display: block; }
+
+  /* Note */
+  .card-note {
+    background: var(--cream); padding: 20px 48px;
+    font-size: 10px; color: var(--taupe); letter-spacing: 0.05em;
+    display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px solid var(--beige);
+  }
+
+  /* Photo upload button */
+  .photo-upload-area {
+    width: 100%;
+    border: 1px dashed var(--taupe);
+    padding: 12px;
+    text-align: center;
+    font-size: 11px; color: var(--taupe);
+    cursor: pointer; border-radius: 2px;
+    transition: all 0.2s;
+    background: var(--cream);
+  }
+  .photo-upload-area:hover { border-color: var(--accent); color: var(--accent); }
+  .photo-upload-area input { display: none; }
+
+  /* Theme switcher */
+  .theme-bar {
+    display: flex; gap: 8px; align-items: center;
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--taupe);
+  }
+  .theme-dot {
+    width: 16px; height: 16px; border-radius: 50%; cursor: pointer;
+    border: 2px solid transparent; transition: all 0.2s;
+  }
+  .theme-dot.active { border-color: var(--cream); transform: scale(1.2); }
+
+  @media print {
+    .workspace { display: block; height: auto; }
+    .editor, .topbar { display: none; }
+    .preview { padding: 0; background: white; }
+    .style-card { box-shadow: none; max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="topbar-title">Карта стиля — рабочий инструмент</span>
+  <div class="topbar-actions">
+    <div class="theme-bar">
+      <span>Тема:</span>
+      <div class="theme-dot active" style="background:#F5F0E8" data-theme="warm" title="Тёплый натуральный" onclick="setTheme('warm',this)"></div>
+      <div class="theme-dot" style="background:#E8EDF0" data-theme="cool" title="Холодный минимал" onclick="setTheme('cool',this)"></div>
+      <div class="theme-dot" style="background:#2C2C2C" data-theme="dark" title="Тёмный люкс" onclick="setTheme('dark',this)"></div>
+    </div>
+    <button class="btn" onclick="document.getElementById('importJsonInput').click()">↑ Загрузить анкету</button>
+    <input type="file" id="importJsonInput" accept=".json" style="display:none" onchange="importJSON(this)">
+    <button class="btn" onclick="exportJSON()">↓ Экспорт JSON</button>
+    <button class="btn btn-primary" onclick="window.print()">Печать / PDF</button>
+  </div>
+</div>
+
+<div class="workspace">
+  <!-- EDITOR -->
+  <div class="editor">
+
+    <div class="import-banner" id="importBanner">✓ Анкета загружена — данные клиента перенесены в карту</div>
+
+    <!-- ✦ AI PANEL ✦ -->
+    <div class="ai-panel">
+      <div class="ai-panel-title"><span class="ai-spark">✦</span> AI-анализ клиента</div>
+      <div class="ai-panel-sub">Загрузи фото → Claude напишет тексты за 30 секунд</div>
+
+      <div class="ai-photo-row">
+        <div class="ai-photo-slot" id="aiSlot1" onclick="document.getElementById('aiPhoto1').click()">
+          <input type="file" id="aiPhoto1" accept="image/*" onchange="loadAiPhoto(this,1)">
+          <div class="ai-photo-icon">📷</div>
+          <div>Лицо / фас</div>
+        </div>
+        <div class="ai-photo-slot" id="aiSlot2" onclick="document.getElementById('aiPhoto2').click()">
+          <input type="file" id="aiPhoto2" accept="image/*" onchange="loadAiPhoto(this,2)">
+          <div class="ai-photo-icon">🖼</div>
+          <div>Фигура / полный рост</div>
+        </div>
+        <div class="ai-photo-slot" id="aiSlot3" onclick="document.getElementById('aiPhoto3').click()">
+          <input type="file" id="aiPhoto3" accept="image/*" onchange="loadAiPhoto(this,3)">
+          <div class="ai-photo-icon">📋</div>
+          <div>Текущий образ</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:10px">
+        <div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:#6B5B4E;margin-bottom:6px">Что генерировать:</div>
+        <div class="ai-sections">
+          <button class="ai-section-chip on" data-section="colortype">Цветотип</button>
+          <button class="ai-section-chip on" data-section="figure">Морфотип</button>
+          <button class="ai-section-chip on" data-section="archetype">Архетип</button>
+          <button class="ai-section-chip on" data-section="goals">Задачи стилизации</button>
+          <button class="ai-section-chip on" data-section="hair">Прическа</button>
+          <button class="ai-section-chip on" data-section="kibbi">Типаж Кибби</button>
+        </div>
+      </div>
+
+      <button class="ai-generate-btn" id="aiGenerateBtn" onclick="runAiAnalysis()">
+        ✦ Сгенерировать анализ
+      </button>
+      <div class="ai-status" id="aiStatus"></div>
+
+      <div class="ai-divider"></div>
+      <div class="ai-key-label">API ключ Anthropic</div>
+      <div class="ai-key-row">
+        <input type="password" class="ai-key-input" id="aiApiKey" placeholder="sk-ant-api03-...">
+        <button class="ai-section-chip on" onclick="saveApiKey()" style="padding:7px 12px;border-radius:2px">Сохранить</button>
+      </div>
+      <div style="font-size:9px;color:#5C4C3E;margin-top:5px;line-height:1.6">Ключ хранится только в браузере (localStorage). Получить: console.anthropic.com</div>
+    </div>
+
+    <div class="section-label" style="margin-top:0;border-radius:0">Основное</div>
+    <div class="field-group">
+      <label>Имя клиента</label>
+      <input type="text" id="clientName" value="Аллы Боровой" oninput="update()" placeholder="Имя Фамилия">
+    </div>
+    <div class="field-group">
+      <label>Вид услуги</label>
+      <select id="serviceType" onchange="update()">
+        <option value="Карта стиля">Карта стиля</option>
+        <option value="Разбор гардероба" selected>Разбор гардероба</option>
+        <option value="Анализ внешности">Анализ внешности и прическа</option>
+        <option value="Сезонная капсула">Сезонная капсула</option>
+        <option value="Шоппинг-сопровождение">Шоппинг-сопровождение</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label>Фото клиента (обложка)</label>
+      <div class="photo-upload-area" onclick="document.getElementById('coverPhotoInput').click()">
+        <input type="file" id="coverPhotoInput" accept="image/*" onchange="loadPhoto(this,'coverPhotoPreview','coverPhotoMini')">
+        ＋ Загрузить фото
+      </div>
+    </div>
+
+    <div class="section-label" style="margin-top:8px">Цветотип</div>
+    <div class="field-group">
+      <div class="field-row">
+        <div>
+          <label>Название цветотипа</label>
+          <input type="text" id="colorTypeName" value="Мягкое лето" oninput="update()">
+        </div>
+        <div>
+          <label>Подзаголовок / цитата</label>
+          <input type="text" id="colorTypeQuote" value="Нежность и глубина" oninput="update()">
+        </div>
+      </div>
+    </div>
+    <div class="field-group">
+      <label>Описание цветотипа</label>
+      <textarea id="colorTypeDesc" oninput="update()">Нейтрально-холодный подтон кожи. Мягкая внешность с низким контрастом. Все цвета должны быть нежными, мягкими, с приглушённостью.</textarea>
+    </div>
+
+    <div class="section-label">Палитра цветов</div>
+    <div class="field-group">
+      <label>Базовые цвета</label>
+      <div class="swatch-editor" id="baseSwatches"></div>
+      <button class="add-swatch-btn" onclick="addSwatch('baseSwatches','#C4B5A0','мягкий')">+ добавить цвет</button>
+    </div>
+    <div class="field-group">
+      <label>Акцентные цвета</label>
+      <div class="swatch-editor" id="accentSwatches"></div>
+      <button class="add-swatch-btn" onclick="addSwatch('accentSwatches','#D4A9A0','розовый')">+ добавить цвет</button>
+    </div>
+    <div class="field-group">
+      <label>Избегать</label>
+      <div class="tag-list" id="avoidTags"></div>
+      <div class="tag-input-row">
+        <input type="text" id="avoidInput" placeholder="жёлтый, горчичный..." onkeydown="if(event.key==='Enter')addAvoid()">
+        <button class="tag-add-btn" onclick="addAvoid()">+</button>
+      </div>
+    </div>
+
+    <div class="section-label">Тип фигуры</div>
+    <div class="field-group">
+      <div class="field-row">
+        <div>
+          <label>Тип фигуры</label>
+          <input type="text" id="figureType" value="Песочные часы" oninput="update()">
+        </div>
+        <div>
+          <label>Подзаголовок</label>
+          <input type="text" id="figureSub" value="Гармония пропорций" oninput="update()">
+        </div>
+      </div>
+    </div>
+    <div class="field-group">
+      <label>Описание фигуры</label>
+      <textarea id="figureDesc" oninput="update()">Фигура отличается гармоничными пропорциями верха и низа, при этом линия талии выражена естественно и мягко. Плечи и бёдра визуально сбалансированы.</textarea>
+    </div>
+    <div class="field-group">
+      <label>Рекомендации (каждая строка — отдельный пункт)</label>
+      <div class="outfit-list" id="figureRecList"></div>
+      <button class="add-outfit-btn" onclick="addFigureRec()">+ добавить рекомендацию</button>
+    </div>
+
+    <div class="section-label">Архетип стиля</div>
+    <div class="field-group">
+      <label>Название архетипа</label>
+      <input type="text" id="archetypeName" value="Королева + Любовница" oninput="update()">
+    </div>
+    <div class="field-group">
+      <label>Подзаголовок архетипа</label>
+      <input type="text" id="archetypeSub" value="Статус + притяжение · Структура + чувственность" oninput="update()">
+    </div>
+    <div class="field-group field-row">
+      <div>
+        <label>Колонка 1 — заголовок</label>
+        <input type="text" id="arch1Title" value="Королева — твоя база" oninput="update()">
+        <label style="margin-top:8px">Текст</label>
+        <textarea id="arch1Text" oninput="update()" style="min-height:88px">Чёткие линии\nСтруктурированные силуэты\nМонохром\nЛаконичные украшения\nДорогая простота</textarea>
+      </div>
+      <div>
+        <label>Колонка 2 — заголовок</label>
+        <input type="text" id="arch2Title" value="Любовница — твой акцент" oninput="update()">
+        <label style="margin-top:8px">Текст</label>
+        <textarea id="arch2Text" oninput="update()" style="min-height:88px">Атлас, шёлк\nV-вырез\nМягкие ткани\nАкцент на шею\nКаблук</textarea>
+      </div>
+    </div>
+
+    <div class="section-label">Образы / комплекты</div>
+    <div class="outfit-list" id="outfitsList"></div>
+    <button class="add-outfit-btn" style="margin-top:8px" onclick="addOutfit()">+ добавить образ</button>
+
+    <div class="section-label" style="margin-top:8px">Задачи стилизации</div>
+    <div class="field-group">
+      <label>Список задач (каждая строка — отдельный пункт)</label>
+      <div class="outfit-list" id="goalsList"></div>
+      <button class="add-outfit-btn" onclick="addGoal()">+ добавить задачу</button>
+    </div>
+
+    <div class="section-label" style="margin-top:8px">Типаж по Кибби</div>
+    <div class="field-group">
+      <div class="field-row">
+        <div>
+          <label>Название типажа (рус)</label>
+          <input type="text" id="kibbiName" value="Мягкий классик" oninput="update()">
+        </div>
+        <div>
+          <label>Название (англ)</label>
+          <input type="text" id="kibbiNameEn" value="Soft Classic" oninput="update()">
+        </div>
+      </div>
+    </div>
+    <div class="field-group">
+      <label>Описание типажа</label>
+      <textarea id="kibbiDesc" oninput="update()">Сбалансированная, мягко женственная внешность, которой подходят аккуратные линии, умеренная классика и спокойная элегантность без крайностей.</textarea>
+    </div>
+    <div class="field-group">
+      <label>Иллюстрация типажа</label>
+      <div class="photo-upload-area" onclick="document.getElementById('kibbiIllInput').click()">
+        <input type="file" id="kibbiIllInput" accept="image/*" onchange="loadSinglePhoto(this,'kibbiIllPreview')">
+        ＋ Иллюстрация / портрет типажа
+      </div>
+    </div>
+    <div class="field-group">
+      <label>Коллаж образов типажа (до 6 фото)</label>
+      <div id="kibbiCollageEditor" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px"></div>
+      <button class="add-outfit-btn" style="margin-top:6px" onclick="document.getElementById('kibbiCollageInput').click()">+ добавить фото в коллаж</button>
+      <input type="file" id="kibbiCollageInput" accept="image/*" multiple style="display:none" onchange="addKibbiCollage(this)">
+    </div>
+
+    <div class="section-label" style="margin-top:8px">Прическа — цвет волос</div>
+    <div class="field-group">
+      <label>Рекомендуемые цвета волос (каждая строка)</label>
+      <div class="outfit-list" id="hairColorGoodList"></div>
+      <button class="add-outfit-btn" onclick="addHairColor('good')">+ добавить</button>
+    </div>
+    <div class="field-group">
+      <label>Что не подходит (каждая строка)</label>
+      <div class="outfit-list" id="hairColorAvoidList"></div>
+      <button class="add-outfit-btn" onclick="addHairColor('avoid')">+ добавить</button>
+    </div>
+    <div class="field-group">
+      <label>Цитата-рекомендация (в кружке)</label>
+      <textarea id="hairQuote" oninput="update()" style="min-height:60px">Оптимально: ухоженные, естественные причёски с мягкой текстурой, которые подчёркивают индивидуальность.</textarea>
+    </div>
+
+    <div class="section-label" style="margin-top:8px">Примеры фасонов</div>
+    <div class="field-group">
+      <label>Фото фасонов (до 12 изображений)</label>
+      <div id="fashionGridEditor" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px"></div>
+      <button class="add-outfit-btn" style="margin-top:6px" onclick="document.getElementById('fashionInput').click()">+ добавить фото фасонов</button>
+      <input type="file" id="fashionInput" accept="image/*" multiple style="display:none" onchange="addFashionPhotos(this)">
+    </div>
+
+    <div class="section-label" style="margin-top:8px">Стайлборд</div>
+    <div class="field-group">
+      <label>Подпись к стайлборду</label>
+      <input type="text" id="moodboardTitle" value="Стайлборд" oninput="update()">
+    </div>
+    <div class="field-group">
+      <label>Фото для стайлборда (до 12 из Pinterest)</label>
+      <div id="moodboardEditor" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px"></div>
+      <button class="add-outfit-btn" style="margin-top:6px" onclick="document.getElementById('moodboardInput').click()">+ добавить фото</button>
+      <input type="file" id="moodboardInput" accept="image/*" multiple style="display:none" onchange="addMoodboardPhotos(this)">
+    </div>
+
+    <div class="section-label" style="margin-top:8px">Прическа</div>
+    <div class="field-group">
+      <div class="field-row">
+        <div>
+          <label>Тип прически</label>
+          <input type="text" id="hairType" value="Мягкая волна" oninput="update()">
+        </div>
+        <div>
+          <label>Подзаголовок</label>
+          <input type="text" id="hairSub" value="Женственность и лёгкость" oninput="update()">
+        </div>
+      </div>
+    </div>
+    <div class="field-group">
+      <label>Описание</label>
+      <textarea id="hairDesc" oninput="update()" placeholder="Описание рекомендуемой прически...">Мягкие волны средней длины подчёркивают нежность цветотипа и гармонируют с округлыми чертами лица. Избегать жёстких геометрических форм и тяжёлых прямых стрижек.</textarea>
+    </div>
+    <div class="field-group">
+      <label>Рекомендуемые стрижки / укладки (через запятую)</label>
+      <input type="text" id="hairTags" value="Каскад, Лесенка, Боб с удлинением, Локоны на ночь" oninput="update()">
+    </div>
+    <div class="field-group">
+      <label>Фото рекомендуемой прически</label>
+      <div class="photo-upload-area" onclick="document.getElementById('hairPhotoInput').click()">
+        <input type="file" id="hairPhotoInput" accept="image/*" onchange="loadSinglePhoto(this,'hairPhotoPreview')">
+        ＋ Загрузить референс прически
+      </div>
+    </div>
+
+    <div class="section-label" style="margin-top:8px">Шопинг-лист</div>
+    <div class="field-group">
+      <label>Категория 1 — название</label>
+      <input type="text" id="shopCat1" value="Базовый гардероб" oninput="update()">
+    </div>
+    <div class="field-group">
+      <label>Вещи в категории 1</label>
+      <div class="outfit-list" id="shopList1"></div>
+      <button class="add-outfit-btn" onclick="addShopItem(1)">+ добавить вещь</button>
+    </div>
+    <div class="field-group">
+      <label>Категория 2 — название</label>
+      <input type="text" id="shopCat2" value="Акценты сезона" oninput="update()">
+    </div>
+    <div class="field-group">
+      <label>Вещи в категории 2</label>
+      <div class="outfit-list" id="shopList2"></div>
+      <button class="add-outfit-btn" onclick="addShopItem(2)">+ добавить вещь</button>
+    </div>
+    <div class="field-group">
+      <label>Категория 3 — название</label>
+      <input type="text" id="shopCat3" value="Аксессуары" oninput="update()">
+    </div>
+    <div class="field-group">
+      <label>Вещи в категории 3</label>
+      <div class="outfit-list" id="shopList3"></div>
+      <button class="add-outfit-btn" onclick="addShopItem(3)">+ добавить вещь</button>
+    </div>
+
+    <div class="field-group" style="margin-top:24px">
+      <label>Имя стилиста (подпись)</label>
+      <input type="text" id="stylistName" value="Еремина Екатерина" oninput="update()">
+    </div>
+
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="preview">
+    <div class="style-card" id="styleCard">
+
+      <!-- Cover -->
+      <div class="card-cover">
+        <div class="cover-photo" id="coverPhotoPreview">фото клиента</div>
+        <div class="cover-text">
+          <div class="cover-service" id="previewService">Разбор гардероба</div>
+          <div class="cover-name">Разбор гардероба<br><em id="previewName">Аллы Боровой</em></div>
+          <div class="cover-subtitle" id="previewSubtitle">Персональная карта стиля</div>
+          <div class="cover-divider"></div>
+          <div class="cover-meta">
+            выполнена стилистом <span id="previewStylist">Ереминой Екатериной</span><br>
+            <span id="previewDate"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Colortype -->
+      <div class="card-section">
+        <div class="section-title">Анализ цветотипа и палитра цветов</div>
+        <div class="colortype-block">
+          <div class="client-mini-photo" id="coverPhotoMini">фото</div>
+          <div class="palette-mini" id="paletteMiniPreview"></div>
+          <div class="colortype-info">
+            <div class="colortype-name" id="previewColorTypeName">Мягкое лето</div>
+            <div class="colortype-quote" id="previewColorTypeQuote">"Нежность и глубина"</div>
+            <div class="colortype-desc" id="previewColorTypeDesc">Нейтрально-холодный подтон кожи.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Palette -->
+      <div class="card-section">
+        <div class="section-title">Рекомендации по цветовым сочетаниям</div>
+        <div class="palette-grid">
+          <div class="palette-column">
+            <div class="palette-col-title">Базовые цвета</div>
+            <div class="palette-swatches" id="previewBaseSwatches"></div>
+          </div>
+          <div class="palette-column">
+            <div class="palette-col-title">Акцентные цвета</div>
+            <div class="palette-swatches" id="previewAccentSwatches"></div>
+          </div>
+          <div class="palette-column">
+            <div class="palette-col-title">Избегать</div>
+            <div class="avoid-swatches" id="previewAvoidTags"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Figure -->
+      <div class="card-section">
+        <div class="section-title">Анализ фигуры</div>
+        <div class="figure-block">
+          <div class="figure-photo" id="figureMiniPhoto">фото фигуры</div>
+          <div class="figure-info">
+            <div class="figure-type-name" id="previewFigureType">Песочные часы</div>
+            <div class="figure-type-sub" id="previewFigureSub">Тип фигуры</div>
+            <div class="figure-desc" id="previewFigureDesc">Описание фигуры...</div>
+            <ul class="rec-list" id="previewFigureRecs"></ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Archetype -->
+      <div class="card-section">
+        <div class="section-title">Архетипический код</div>
+        <div class="archetype-block">
+          <div class="archetype-name" id="previewArchetypeName">Королева + Любовница</div>
+          <div class="archetype-sub" id="previewArchetypeSub">Статус + притяжение · Структура + чувственность</div>
+        </div>
+        <div class="archetype-cols">
+          <div class="archetype-col">
+            <div class="archetype-col-title" id="previewArch1Title">👑 Королева — твоя база</div>
+            <p id="previewArch1Text"></p>
+          </div>
+          <div class="archetype-col">
+            <div class="archetype-col-title" id="previewArch2Title">🔥 Любовница — твой акцент</div>
+            <p id="previewArch2Text"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Outfits -->
+      <div class="card-section" id="outfitsSection">
+        <div class="section-title">Образы и комплекты</div>
+        <div class="outfits-list" id="previewOutfits"></div>
+      </div>
+
+      <!-- Styling goals -->
+      <div class="card-section" id="goalsSection">
+        <div class="section-title">Задачи стилизации</div>
+        <div class="goals-list" id="previewGoals"></div>
+      </div>
+
+      <!-- Kibbi -->
+      <div class="card-section" id="kibbiSection">
+        <div class="section-title">Типаж по системе Кибби</div>
+        <div class="kibbi-block">
+          <div class="kibbi-illustration" id="kibbiIllPreview">иллюстрация</div>
+          <div class="kibbi-info">
+            <div class="kibbi-system">Kibbe Typology</div>
+            <div class="kibbi-name" id="previewKibbiName">Мягкий классик</div>
+            <div class="kibbi-name-en" id="previewKibbiNameEn">Soft Classic</div>
+            <div class="kibbi-desc" id="previewKibbiDesc">Описание типажа...</div>
+          </div>
+          <div class="kibbi-collage" id="previewKibbiCollage">
+            <div class="kibbi-collage-item">фото</div>
+            <div class="kibbi-collage-item">фото</div>
+            <div class="kibbi-collage-item">фото</div>
+            <div class="kibbi-collage-item">фото</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fashion examples -->
+      <div class="card-section" id="fashionSection">
+        <div class="section-title">Примеры фасонов</div>
+        <div class="fashion-grid" id="previewFashionGrid">
+          <div class="fashion-item" style="opacity:0.3;font-size:11px">фото фасонов</div>
+        </div>
+      </div>
+
+      <!-- Moodboard -->
+      <div class="card-section" id="moodboardSection">
+        <div class="moodboard-wrap">
+          <div class="moodboard-title-block">
+            <div>
+              <div class="moodboard-name" id="previewMoodboardTitle">Стайлборд</div>
+              <div style="width:60px;height:1px;background:var(--taupe);margin-top:10px"></div>
+            </div>
+          </div>
+          <div class="moodboard-grid" id="previewMoodboard">
+            <div class="moodboard-cell" style="opacity:0.3;font-size:11px">фото</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hairstyle -->
+      <div class="card-section" id="hairSection">
+        <div class="section-title">Подбор прически</div>
+        <div class="hair-block">
+          <div class="hair-photo" id="hairPhotoPreview">референс прически</div>
+          <div class="hair-info">
+            <div class="hair-type-name" id="previewHairType">Мягкая волна</div>
+            <div class="hair-type-sub" id="previewHairSub">Женственность и лёгкость</div>
+            <div class="hair-desc" id="previewHairDesc">Описание прически...</div>
+            <div class="hair-tags" id="previewHairTags"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shopping list -->
+      <div class="card-section" id="shopSection">
+        <div class="section-title">Шопинг-лист</div>
+        <div class="shop-legend">
+          <div class="shop-legend-item"><div class="shop-item-priority priority-must"></div>Обязательно</div>
+          <div class="shop-legend-item"><div class="shop-item-priority priority-want"></div>Желательно</div>
+          <div class="shop-legend-item"><div class="shop-item-priority priority-later"></div>Позже</div>
+        </div>
+        <div class="shop-categories" id="previewShopList"></div>
+      </div>
+
+      <div class="card-note">
+        <span>Карта стиля подготовлена персонально · Не является универсальной рекомендацией</span>
+        <span id="noteDate"></span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── STATE ────────────────────────────────────────────────
+const state = {
+  baseSwatches: [
+    {color:'#B4B2A9', name:'мягкий серый'},
+    {color:'#8B8B82', name:'светлый графит'},
+    {color:'#C8BFB0', name:'серо-бежевый'},
+    {color:'#D9CCB8', name:'холодный беж'},
+    {color:'#C9BBA8', name:'тауп'},
+    {color:'#F0EDE6', name:'молочный'},
+  ],
+  accentSwatches: [
+    {color:'#D4A9A0', name:'пыльная роза'},
+    {color:'#CBBDBD', name:'розово-бежевый'},
+    {color:'#B8B0C8', name:'лавандовый'},
+    {color:'#9BA8A8', name:'сиренево-серый'},
+    {color:'#8FA8A0', name:'дымчато-голубой'},
+  ],
+  avoidList: ['жёлтого', 'горчичного', 'тёплого бежа', 'терракоты', 'ярко-чёрного', 'чисто-белого'],
+  figureRecs: ['Подчёркивать талию поясами и приталенными силуэтами', 'Юбки и брюки с высокой талией', 'Wrap-платья и V-образные вырезы', 'Избегать объёмных деталей на плечах и бёдрах'],
+  outfits: ['Белая блуза + тёмные брюки с высокой талией + бежевое пальто', 'Серое трикотажное платье + лавандовый шарф + нейтральные лодочки', 'Джинсы + мягкая блуза в тонах палитры + трench coat'],
+  shopItems: {
+    1: [{name:'Белая рубашка свободного кроя', priority:'must', price:'3 000–8 000 ₽', url:''}, {name:'Прямые брюки тауп', priority:'must', price:'4 000–12 000 ₽', url:''}, {name:'Базовый трикотаж в тонах палитры', priority:'want', price:'2 000–5 000 ₽', url:''}],
+    2: [{name:'Шёлковый шарф в мягких тонах', priority:'want', price:'2 000–6 000 ₽', url:''}, {name:'Wrap-платье с принтом', priority:'want', price:'5 000–15 000 ₽', url:''}],
+    3: [{name:'Лодочки бежевого / серого тона', priority:'must', price:'5 000–15 000 ₽', url:''}, {name:'Минималистичные серьги', priority:'later', price:'1 000–4 000 ₽', url:''}],
+  },
+  goals: [
+    'Подчеркнуть природную гармонию пропорций',
+    'Сохранить баланс между верхней и нижней частью тела',
+    'Мягко обозначить линию талии',
+    'Использовать фасоны, которые деликатно подчёркивают талию',
+    'Подбирать линии и вырезы, которые визуально вытягивают фигуру',
+  ],
+  hairColorGood: ['холодный бежевый блонд', 'пепельно-русый', 'мягкий блонд без жёлтого подтона', 'деликатные светлые пряди (без резкого контраста)'],
+  hairColorAvoid: ['очень короткие стрижки «под мальчика»', 'жёсткое геометричное каре', 'сильный объём у корней + по бокам', 'тёплые золотистые и медные оттенки волос'],
+  kibbiCollage: [],
+  fashionPhotos: [],
+  moodboardPhotos: [],
+};
+
+// ─── INIT ─────────────────────────────────────────────────
+function init() {
+  renderSwatchEditor('baseSwatches', state.baseSwatches);
+  renderSwatchEditor('accentSwatches', state.accentSwatches);
+  renderAvoidTags();
+  renderFigureRecs();
+  renderOutfitsList();
+  renderShopList(1); renderShopList(2); renderShopList(3);
+  renderGoalsList();
+  renderHairColorList('good'); renderHairColorList('avoid');
+  update();
+  const d = new Date();
+  document.getElementById('previewDate').textContent = d.toLocaleDateString('ru-RU', {year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('noteDate').textContent = d.toLocaleDateString('ru-RU', {year:'numeric',month:'long'});
+}
+
+// ─── SWATCHES ─────────────────────────────────────────────
+function renderSwatchEditor(id, arr) {
+  const container = document.getElementById(id);
+  container.innerHTML = '';
+  arr.forEach((sw, i) => {
+    const item = document.createElement('div');
+    item.className = 'swatch-item';
+    item.innerHTML = `
+      <div class="swatch-color" style="background:${sw.color}">
+        <input type="color" value="${sw.color}" oninput="updateSwatchColor('${id}',${i},this.value)">
+      </div>
+      <div class="swatch-name"><input type="text" value="${sw.name}" oninput="updateSwatchName('${id}',${i},this.value)" style="width:80px"></div>
+      <span class="swatch-remove" onclick="removeSwatch('${id}',${i})">×</span>
+    `;
+    container.appendChild(item);
+  });
+}
+
+function addSwatch(id, color, name) {
+  state[id].push({color, name});
+  renderSwatchEditor(id, state[id]);
+  update();
+}
+function updateSwatchColor(id, i, val) { state[id][i].color = val; update(); }
+function updateSwatchName(id, i, val) { state[id][i].name = val; update(); }
+function removeSwatch(id, i) { state[id].splice(i,1); renderSwatchEditor(id, state[id]); update(); }
+
+// ─── AVOID TAGS ───────────────────────────────────────────
+function renderAvoidTags() {
+  const c = document.getElementById('avoidTags');
+  c.innerHTML = '';
+  state.avoidList.forEach((t,i) => {
+    const tag = document.createElement('div');
+    tag.className = 'tag';
+    tag.innerHTML = `${t}<span onclick="removeAvoid(${i})">×</span>`;
+    c.appendChild(tag);
+  });
+}
+function addAvoid() {
+  const inp = document.getElementById('avoidInput');
+  const val = inp.value.trim();
+  if(val) { state.avoidList.push(val); inp.value=''; renderAvoidTags(); update(); }
+}
+function removeAvoid(i) { state.avoidList.splice(i,1); renderAvoidTags(); update(); }
+
+// ─── FIGURE RECS ──────────────────────────────────────────
+function renderFigureRecs() {
+  const c = document.getElementById('figureRecList');
+  c.innerHTML = '';
+  state.figureRecs.forEach((r,i) => {
+    const row = document.createElement('div');
+    row.className = 'outfit-item';
+    row.innerHTML = `<input type="text" value="${r}" oninput="state.figureRecs[${i}]=this.value;update()"><button onclick="removeFigureRec(${i})">×</button>`;
+    c.appendChild(row);
+  });
+}
+function addFigureRec() { state.figureRecs.push(''); renderFigureRecs(); update(); }
+function removeFigureRec(i) { state.figureRecs.splice(i,1); renderFigureRecs(); update(); }
+
+// ─── OUTFITS ──────────────────────────────────────────────
+function renderOutfitsList() {
+  const c = document.getElementById('outfitsList');
+  c.innerHTML = '';
+  state.outfits.forEach((o,i) => {
+    const row = document.createElement('div');
+    row.className = 'outfit-item';
+    row.innerHTML = `<input type="text" value="${o}" oninput="state.outfits[${i}]=this.value;update()"><button onclick="removeOutfit(${i})">×</button>`;
+    c.appendChild(row);
+  });
+}
+function addOutfit() { state.outfits.push(''); renderOutfitsList(); update(); }
+function removeOutfit(i) { state.outfits.splice(i,1); renderOutfitsList(); update(); }
+
+// ─── UPDATE PREVIEW ───────────────────────────────────────
+function update() {
+  const name = document.getElementById('clientName').value;
+  const service = document.getElementById('serviceType').value;
+
+  document.getElementById('previewName').textContent = name;
+  document.getElementById('previewService').textContent = service;
+  document.getElementById('previewStylist').textContent = document.getElementById('stylistName').value;
+
+  // Cover title rewrite
+  document.querySelector('.cover-name').innerHTML = service + '<br><em>' + name + '</em>';
+
+  // Colortype
+  document.getElementById('previewColorTypeName').textContent = document.getElementById('colorTypeName').value;
+  document.getElementById('previewColorTypeQuote').textContent = '"' + document.getElementById('colorTypeQuote').value + '"';
+  document.getElementById('previewColorTypeDesc').textContent = document.getElementById('colorTypeDesc').value;
+
+  // Figure
+  document.getElementById('previewFigureType').textContent = 'Тип фигуры "' + document.getElementById('figureType').value + '"';
+  document.getElementById('previewFigureSub').textContent = document.getElementById('figureSub').value;
+  document.getElementById('previewFigureDesc').textContent = document.getElementById('figureDesc').value;
+
+  // Figure recs
+  const recsEl = document.getElementById('previewFigureRecs');
+  recsEl.innerHTML = '';
+  state.figureRecs.forEach(r => {
+    if(r.trim()) { const li = document.createElement('li'); li.textContent = r; recsEl.appendChild(li); }
+  });
+
+  // Archetype
+  document.getElementById('previewArchetypeName').textContent = document.getElementById('archetypeName').value;
+  document.getElementById('previewArchetypeSub').textContent = document.getElementById('archetypeSub').value;
+  document.getElementById('previewArch1Title').textContent = document.getElementById('arch1Title').value;
+  document.getElementById('previewArch2Title').textContent = document.getElementById('arch2Title').value;
+  document.getElementById('previewArch1Text').innerHTML = document.getElementById('arch1Text').value.replace(/\n/g,'<br>');
+  document.getElementById('previewArch2Text').innerHTML = document.getElementById('arch2Text').value.replace(/\n/g,'<br>');
+
+  // Palette mini
+  const mini = document.getElementById('paletteMiniPreview');
+  mini.innerHTML = '';
+  [...state.baseSwatches, ...state.accentSwatches].slice(0,8).forEach(sw => {
+    const d = document.createElement('div');
+    d.className = 'palette-mini-swatch';
+    d.style.background = sw.color;
+    mini.appendChild(d);
+  });
+
+  // Base swatches preview
+  const baseP = document.getElementById('previewBaseSwatches');
+  baseP.innerHTML = '';
+  state.baseSwatches.forEach(sw => {
+    baseP.innerHTML += `<div class="palette-swatch-row"><div class="palette-swatch-circle" style="background:${sw.color}"></div><span class="palette-swatch-label">${sw.name}</span></div>`;
+  });
+
+  // Accent swatches preview
+  const accentP = document.getElementById('previewAccentSwatches');
+  accentP.innerHTML = '';
+  state.accentSwatches.forEach(sw => {
+    accentP.innerHTML += `<div class="palette-swatch-row"><div class="palette-swatch-circle" style="background:${sw.color}"></div><span class="palette-swatch-label">${sw.name}</span></div>`;
+  });
+
+  // Avoid
+  const avoidP = document.getElementById('previewAvoidTags');
+  avoidP.innerHTML = '';
+  state.avoidList.forEach(t => {
+    avoidP.innerHTML += `<div class="avoid-swatch-row"><span class="avoid-cross">✕</span><span class="avoid-swatch-label">${t}</span></div>`;
+  });
+
+  // Outfits
+  const outfitsP = document.getElementById('previewOutfits');
+  outfitsP.innerHTML = '';
+  state.outfits.forEach((o,i) => {
+    if(o.trim()) outfitsP.innerHTML += `<div class="outfit-card"><div class="outfit-num">Образ ${i+1}</div>${o}</div>`;
+  });
+
+  // Goals
+  const goalsP = document.getElementById('previewGoals');
+  goalsP.innerHTML = '';
+  state.goals.forEach(g => {
+    if(g.trim()) goalsP.innerHTML += `<div class="goal-item"><div class="goal-bullet"></div><span>${g}</span></div>`;
+  });
+  document.getElementById('goalsSection').style.display = state.goals.filter(g=>g.trim()).length ? '' : 'none';
+
+  // Kibbi
+  document.getElementById('previewKibbiName').textContent = document.getElementById('kibbiName').value;
+  document.getElementById('previewKibbiNameEn').textContent = document.getElementById('kibbiNameEn').value;
+  document.getElementById('previewKibbiDesc').textContent = document.getElementById('kibbiDesc').value;
+  const collageEl = document.getElementById('previewKibbiCollage');
+  if(state.kibbiCollage.length) {
+    collageEl.innerHTML = '';
+    state.kibbiCollage.slice(0,6).forEach((src,i) => {
+      const cls = i===0 ? 'kibbi-collage-item tall' : 'kibbi-collage-item';
+      collageEl.innerHTML += `<div class="${cls}"><img src="${src}" alt=""></div>`;
+    });
+  }
+
+  // Fashion grid
+  const fashionEl = document.getElementById('previewFashionGrid');
+  if(state.fashionPhotos.length) {
+    fashionEl.innerHTML = '';
+    state.fashionPhotos.forEach(src => {
+      fashionEl.innerHTML += `<div class="fashion-item"><img src="${src}" alt=""></div>`;
+    });
+  }
+  document.getElementById('fashionSection').style.display = state.fashionPhotos.length ? '' : 'none';
+
+  // Moodboard
+  document.getElementById('previewMoodboardTitle').textContent = document.getElementById('moodboardTitle').value;
+  const mbEl = document.getElementById('previewMoodboard');
+  if(state.moodboardPhotos.length) {
+    mbEl.innerHTML = '';
+    state.moodboardPhotos.forEach((src,i) => {
+      const cls = i===0 ? 'moodboard-cell tall' : (i===5 ? 'moodboard-cell wide' : 'moodboard-cell');
+      mbEl.innerHTML += `<div class="${cls}"><img src="${src}" alt=""></div>`;
+    });
+  }
+  document.getElementById('moodboardSection').style.display = state.moodboardPhotos.length ? '' : 'none';
+
+  // Hair
+  document.getElementById('previewHairType').textContent = document.getElementById('hairType').value;
+  document.getElementById('previewHairSub').textContent = document.getElementById('hairSub').value;
+  document.getElementById('previewHairDesc').textContent = document.getElementById('hairDesc').value;
+  const tagsEl = document.getElementById('previewHairTags');
+  tagsEl.innerHTML = '';
+  (document.getElementById('hairTags').value||'').split(',').forEach(t => {
+    if(t.trim()) tagsEl.innerHTML += `<span class="hair-tag">${t.trim()}</span>`;
+  });
+  // Hair color section (injected into hairSection after tags)
+  let hairColorHtml = '';
+  if(state.hairColorGood.length || state.hairColorAvoid.length) {
+    hairColorHtml += '<div class="hair-color-grid" style="margin-top:20px">';
+    hairColorHtml += '<div class="hair-color-col"><div class="hair-color-title">Рекомендации по цвету волос — лучше всего:</div><ul class="hair-color-list">';
+    state.hairColorGood.forEach(h => { if(h.trim()) hairColorHtml += `<li>${h}</li>`; });
+    hairColorHtml += '</ul></div>';
+    hairColorHtml += '<div class="hair-color-col"><div class="hair-color-title">Что лучше не выбирать:</div><ul class="hair-color-list avoid">';
+    state.hairColorAvoid.forEach(h => { if(h.trim()) hairColorHtml += `<li>${h}</li>`; });
+    hairColorHtml += '</ul></div>';
+    const quote = document.getElementById('hairQuote').value;
+    if(quote) hairColorHtml += `<div style="grid-column:span 2;display:flex;justify-content:center"><div class="hair-quote-circle"><div class="hair-quote-text">${quote}</div></div></div>`;
+    hairColorHtml += '</div>';
+  }
+  let hairColorBlock = document.getElementById('previewHairColorBlock');
+  if(!hairColorBlock) {
+    hairColorBlock = document.createElement('div');
+    hairColorBlock.id = 'previewHairColorBlock';
+    document.getElementById('hairSection').appendChild(hairColorBlock);
+  }
+  hairColorBlock.innerHTML = hairColorHtml;
+
+  // Shopping list
+  const shopEl = document.getElementById('previewShopList');
+  shopEl.innerHTML = '';
+  [1,2,3].forEach(n => {
+    const items = state.shopItems[n]||[];
+    if(!items.length) return;
+    const catName = document.getElementById('shopCat'+n).value || 'Категория '+n;
+    let html = `<div class="shop-category"><div class="shop-cat-title">${catName}</div><div class="shop-items">`;
+    items.forEach(item => {
+      if(!item.name.trim()) return;
+      const cls = item.priority==='must'?'priority-must':item.priority==='want'?'priority-want':'priority-later';
+      const link = item.url ? `<a href="${item.url}" target="_blank" class="shop-item-link">→ ссылка</a>` : '';
+      html += `<div class="shop-item"><div class="shop-item-priority ${cls}"></div><span class="shop-item-name">${item.name}</span><span class="shop-item-price">${item.price}</span>${link}</div>`;
+    });
+    html += '</div></div>';
+    shopEl.innerHTML += html;
+  });
+}
+
+// ─── AI ANALYSIS ──────────────────────────────────────────
+const aiPhotos = {};
+
+function loadAiPhoto(input, n) {
+  const file = input.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    aiPhotos[n] = e.target.result;
+    const slot = document.getElementById('aiSlot'+n);
+    slot.classList.add('has-photo');
+    slot.innerHTML = `<img src="${e.target.result}" alt=""><input type="file" id="aiPhoto${n}" accept="image/*" onchange="loadAiPhoto(this,${n})" style="display:none">`;
+    // Also set as cover photo if slot 1
+    if(n===1) {
+      document.getElementById('coverPhotoPreview').innerHTML = `<img src="${e.target.result}" alt="Фото клиента">`;
+      document.getElementById('coverPhotoMini').innerHTML = `<img src="${e.target.result}" alt="">`;
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function saveApiKey() {
+  const key = document.getElementById('aiApiKey').value.trim();
+  if(key) { localStorage.setItem('anthropic_key', key); setAiStatus('Ключ сохранён ✓', 'ok'); }
+}
+
+function getApiKey() {
+  return document.getElementById('aiApiKey').value.trim() || localStorage.getItem('anthropic_key') || '';
+}
+
+function setAiStatus(msg, type='') {
+  const el = document.getElementById('aiStatus');
+  el.textContent = msg; el.className = 'ai-status ' + type;
+}
+
+function getSelectedSections() {
+  return [...document.querySelectorAll('.ai-section-chip.on')].map(c => c.dataset.section);
+}
+
+document.querySelectorAll('.ai-section-chip[data-section]').forEach(chip => {
+  chip.addEventListener('click', () => chip.classList.toggle('on'));
+});
+
+async function runAiAnalysis() {
+  const apiKey = getApiKey();
+  if(!apiKey) { setAiStatus('Введи API ключ Anthropic ↑', 'err'); return; }
+  if(!Object.keys(aiPhotos).length) { setAiStatus('Загрузи хотя бы одно фото клиента ↑', 'err'); return; }
+
+  const sections = getSelectedSections();
+  if(!sections.length) { setAiStatus('Выбери хотя бы один раздел для генерации', 'err'); return; }
+
+  const btn = document.getElementById('aiGenerateBtn');
+  btn.disabled = true; btn.textContent = '⏳ Анализирую...';
+  setAiStatus('Отправляю запрос к Claude...', '');
+
+  // Build context from questionnaire data
+  const clientName = document.getElementById('clientName').value;
+  const lifestyle = document.getElementById('colorTypeDesc').value;
+  const goal = document.getElementById('archetypeSub').value;
+  const figureNotes = document.getElementById('figureDesc').value;
+
+  const contextText = `
+Клиент: ${clientName}
+Запрос/цель: ${goal}
+Образ жизни: ${lifestyle}
+Заметки о фигуре из анкеты: ${figureNotes}
+`.trim();
+
+  const sectionPrompts = {
+    colortype: `ЦВЕТОТИП: определи цветотип (Весна/Лето/Осень/Зима с уточнением — например "Мягкое лето"). Опиши подтон кожи, контрастность внешности. Дай 5-6 базовых цветов и 4-5 акцентных. Перечисли 4-5 цветов которых стоит избегать. Формат: JSON с полями colortype_name, colortype_quote (короткая поэтичная фраза), colortype_desc (2-3 предложения), base_colors (массив {name}), accent_colors (массив {name}), avoid_colors (массив строк).`,
+    figure: `ТИП ФИГУРЫ: определи тип фигуры (Песочные часы / Груша / Яблоко / Прямоугольник / Перевёрнутый треугольник). Опиши пропорции. Дай 4-5 конкретных рекомендаций по фасонам. Формат: JSON с полями figure_type, figure_subtitle (поэтичная фраза), figure_desc (2-3 предложения), figure_recs (массив из 4-5 строк).`,
+    archetype: `АРХЕТИП СТИЛЯ: определи архетип или сочетание архетипов (Королева, Любовница, Романтик, Классик, Натурал, Драматик, Гамин). Дай название и две колонки характеристик. Формат: JSON с полями archetype_name (например "Королева + Любовница"), archetype_sub (подзаголовок), arch1_title, arch1_text (список через \\n), arch2_title, arch2_text (список через \\n).`,
+    goals: `ЗАДАЧИ СТИЛИЗАЦИИ: сформулируй 5-7 конкретных задач стилизации для этого клиента — что именно нужно подчеркнуть, скрыть, создать в образе. Формат: JSON с полем goals (массив строк).`,
+    hair: `ПРИЧЕСКА: порекомендуй подходящие прически и стрижки с учётом типа лица, цветотипа и общей внешности. Укажи рекомендуемые цвета волос (3-4 варианта) и что не подходит (3-4 варианта). Дай короткую цитату-рекомендацию. Формат: JSON с полями hair_type, hair_subtitle, hair_desc (2-3 предложения), hair_tags (строка через запятую), hair_color_good (массив), hair_color_avoid (массив), hair_quote.`,
+    kibbi: `ТИПАЖ ПО КИББИ: определи типаж по системе Кибби (Dramatic, Soft Dramatic, Natural, Soft Natural, Classic, Soft Classic, Romantic, Theatrical Romantic, Gamine, Soft Gamine, Flamboyant Gamine). Дай русское название и описание. Формат: JSON с полями kibbi_name (рус), kibbi_name_en (англ), kibbi_desc (2-3 предложения).`
+  };
+
+  const selectedPrompts = sections.map(s => sectionPrompts[s]).filter(Boolean).join('\n\n');
+
+  // Build message content with photos
+  const content = [];
+  Object.entries(aiPhotos).forEach(([n, src]) => {
+    const base64 = src.split(',')[1];
+    const mediaType = src.includes('image/png') ? 'image/png' : src.includes('image/webp') ? 'image/webp' : 'image/jpeg';
+    content.push({ type: 'image', source: { type: 'base64', media_type: mediaType, data: base64 } });
+  });
+  content.push({
+    type: 'text',
+    text: `Ты — профессиональный стилист-аналитик. Проанализируй клиента по фотографиям.
+
+ДАННЫЕ ИЗ АНКЕТЫ:
+${contextText}
+
+ЗАДАЧА: Проанализируй фото и верни ТОЛЬКО валидный JSON объект без каких-либо пояснений, markdown, бэктиков. Только сырой JSON.
+
+Необходимые разделы анализа:
+${selectedPrompts}
+
+Верни один JSON объект содержащий все запрошенные поля. Все тексты на русском языке. Будь конкретным и профессиональным.`
+  });
+
+  try {
+    setAiStatus('Claude анализирует фото... ✦', '');
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 2000, messages: [{ role: 'user', content }] })
+    });
+
+    if(!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error?.message || 'Ошибка API ' + response.status);
+    }
+
+    const data = await response.json();
+    const rawText = data.content?.find(b => b.type === 'text')?.text || '';
+
+    // Parse JSON — strip any markdown fences
+    const clean = rawText.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
+    let result;
+    try { result = JSON.parse(clean); }
+    catch(e) {
+      // Try to extract JSON from text
+      const match = clean.match(/\{[\s\S]*\}/);
+      if(match) result = JSON.parse(match[0]);
+      else throw new Error('Claude вернул не JSON — попробуй ещё раз');
+    }
+
+    applyAiResult(result, sections);
+    setAiStatus('✓ Анализ готов — проверь и отредактируй тексты', 'ok');
+
+  } catch(err) {
+    setAiStatus('Ошибка: ' + err.message, 'err');
+    console.error(err);
+  } finally {
+    btn.disabled = false; btn.textContent = '✦ Сгенерировать анализ';
+  }
+}
+
+function applyAiResult(r, sections) {
+  if(sections.includes('colortype')) {
+    if(r.colortype_name) document.getElementById('colorTypeName').value = r.colortype_name;
+    if(r.colortype_quote) document.getElementById('colorTypeQuote').value = r.colortype_quote;
+    if(r.colortype_desc) document.getElementById('colorTypeDesc').value = r.colortype_desc;
+    if(r.base_colors?.length) {
+      state.baseSwatches = r.base_colors.map((c,i) => ({
+        color: ['#C4B5A0','#B4B2A9','#D9CCB8','#C8BFB0','#C9BBA8','#F0EDE6'][i] || '#C4B5A0',
+        name: typeof c === 'string' ? c : c.name
+      }));
+      renderSwatchEditor('baseSwatches', state.baseSwatches);
+    }
+    if(r.accent_colors?.length) {
+      state.accentSwatches = r.accent_colors.map((c,i) => ({
+        color: ['#D4A9A0','#CBBDBD','#B8B0C8','#9BA8A8','#8FA8A0'][i] || '#D4A9A0',
+        name: typeof c === 'string' ? c : c.name
+      }));
+      renderSwatchEditor('accentSwatches', state.accentSwatches);
+    }
+    if(r.avoid_colors?.length) {
+      state.avoidList = r.avoid_colors;
+      renderAvoidTags();
+    }
+  }
+  if(sections.includes('figure')) {
+    if(r.figure_type) document.getElementById('figureType').value = r.figure_type;
+    if(r.figure_subtitle) document.getElementById('figureSub').value = r.figure_subtitle;
+    if(r.figure_desc) document.getElementById('figureDesc').value = r.figure_desc;
+    if(r.figure_recs?.length) { state.figureRecs = r.figure_recs; renderFigureRecs(); }
+  }
+  if(sections.includes('archetype')) {
+    if(r.archetype_name) document.getElementById('archetypeName').value = r.archetype_name;
+    if(r.archetype_sub) document.getElementById('archetypeSub').value = r.archetype_sub;
+    if(r.arch1_title) document.getElementById('arch1Title').value = r.arch1_title;
+    if(r.arch1_text) document.getElementById('arch1Text').value = r.arch1_text;
+    if(r.arch2_title) document.getElementById('arch2Title').value = r.arch2_title;
+    if(r.arch2_text) document.getElementById('arch2Text').value = r.arch2_text;
+  }
+  if(sections.includes('goals')) {
+    if(r.goals?.length) { state.goals = r.goals; renderGoalsList(); }
+  }
+  if(sections.includes('hair')) {
+    if(r.hair_type) document.getElementById('hairType').value = r.hair_type;
+    if(r.hair_subtitle) document.getElementById('hairSub').value = r.hair_subtitle;
+    if(r.hair_desc) document.getElementById('hairDesc').value = r.hair_desc;
+    if(r.hair_tags) document.getElementById('hairTags').value = r.hair_tags;
+    if(r.hair_color_good?.length) { state.hairColorGood = r.hair_color_good; renderHairColorList('good'); }
+    if(r.hair_color_avoid?.length) { state.hairColorAvoid = r.hair_color_avoid; renderHairColorList('avoid'); }
+    if(r.hair_quote) document.getElementById('hairQuote').value = r.hair_quote;
+  }
+  if(sections.includes('kibbi')) {
+    if(r.kibbi_name) document.getElementById('kibbiName').value = r.kibbi_name;
+    if(r.kibbi_name_en) document.getElementById('kibbiNameEn').value = r.kibbi_name_en;
+    if(r.kibbi_desc) document.getElementById('kibbiDesc').value = r.kibbi_desc;
+  }
+  update();
+}
+
+// Load saved API key on init
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('anthropic_key');
+  if(saved) document.getElementById('aiApiKey').value = saved;
+});
+
+// ─── SHOP LIST ────────────────────────────────────────────
+function renderShopList(n) {
+  const c = document.getElementById('shopList'+n);
+  c.innerHTML = '';
+  (state.shopItems[n]||[]).forEach((item,i) => {
+    const row = document.createElement('div');
+    row.className = 'outfit-item';
+    row.style.cssText = 'display:flex;gap:4px;align-items:center';
+    row.innerHTML = `
+      <select onchange="state.shopItems[${n}][${i}].priority=this.value;update()" style="width:90px;padding:8px 6px;font-size:11px">
+        <option value="must" ${item.priority==='must'?'selected':''}>Обязательно</option>
+        <option value="want" ${item.priority==='want'?'selected':''}>Желательно</option>
+        <option value="later" ${item.priority==='later'?'selected':''}>Позже</option>
+      </select>
+      <input type="text" value="${item.name}" oninput="state.shopItems[${n}][${i}].name=this.value;update()" placeholder="Название вещи" style="flex:2">
+      <input type="text" value="${item.price}" oninput="state.shopItems[${n}][${i}].price=this.value;update()" placeholder="цена" style="width:100px">
+      <input type="text" value="${item.url}" oninput="state.shopItems[${n}][${i}].url=this.value;update()" placeholder="ссылка" style="width:80px">
+      <button onclick="removeShopItem(${n},${i})">×</button>`;
+    c.appendChild(row);
+  });
+}
+function addShopItem(n) {
+  if(!state.shopItems[n]) state.shopItems[n]=[];
+  state.shopItems[n].push({name:'',priority:'want',price:'',url:''});
+  renderShopList(n); update();
+}
+function removeShopItem(n,i) { state.shopItems[n].splice(i,1); renderShopList(n); update(); }
+
+// ─── GOALS ────────────────────────────────────────────────
+function renderGoalsList() {
+  const c = document.getElementById('goalsList'); c.innerHTML = '';
+  state.goals.forEach((g,i) => {
+    const row = document.createElement('div'); row.className = 'outfit-item';
+    row.innerHTML = `<input type="text" value="${g}" oninput="state.goals[${i}]=this.value;update()"><button onclick="removeGoal(${i})">×</button>`;
+    c.appendChild(row);
+  });
+}
+function addGoal() { state.goals.push(''); renderGoalsList(); update(); }
+function removeGoal(i) { state.goals.splice(i,1); renderGoalsList(); update(); }
+
+// ─── HAIR COLOR ───────────────────────────────────────────
+function renderHairColorList(type) {
+  const arr = type==='good' ? state.hairColorGood : state.hairColorAvoid;
+  const id = type==='good' ? 'hairColorGoodList' : 'hairColorAvoidList';
+  const c = document.getElementById(id); c.innerHTML = '';
+  arr.forEach((h,i) => {
+    const row = document.createElement('div'); row.className = 'outfit-item';
+    row.innerHTML = `<input type="text" value="${h}" oninput="state.hairColor${type==='good'?'Good':'Avoid'}[${i}]=this.value;update()"><button onclick="removeHairColor('${type}',${i})">×</button>`;
+    c.appendChild(row);
+  });
+}
+function addHairColor(type) {
+  if(type==='good') state.hairColorGood.push(''); else state.hairColorAvoid.push('');
+  renderHairColorList(type); update();
+}
+function removeHairColor(type,i) {
+  if(type==='good') state.hairColorGood.splice(i,1); else state.hairColorAvoid.splice(i,1);
+  renderHairColorList(type); update();
+}
+
+// ─── KIBBI COLLAGE ────────────────────────────────────────
+function addKibbiCollage(input) {
+  const files = Array.from(input.files).slice(0, 6 - state.kibbiCollage.length);
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      state.kibbiCollage.push(e.target.result);
+      renderKibbiCollageEditor(); update();
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+function renderKibbiCollageEditor() {
+  const c = document.getElementById('kibbiCollageEditor'); c.innerHTML = '';
+  state.kibbiCollage.forEach((src,i) => {
+    const div = document.createElement('div');
+    div.style.cssText = 'position:relative;width:60px;height:60px';
+    div.innerHTML = `<img src="${src}" style="width:60px;height:60px;object-fit:cover;border-radius:2px"><span onclick="state.kibbiCollage.splice(${i},1);renderKibbiCollageEditor();update()" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.5);color:#fff;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer">×</span>`;
+    c.appendChild(div);
+  });
+}
+
+// ─── FASHION PHOTOS ───────────────────────────────────────
+function addFashionPhotos(input) {
+  const files = Array.from(input.files).slice(0, 12 - state.fashionPhotos.length);
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => { state.fashionPhotos.push(e.target.result); renderFashionEditor(); update(); };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+function renderFashionEditor() {
+  const c = document.getElementById('fashionGridEditor'); c.innerHTML = '';
+  state.fashionPhotos.forEach((src,i) => {
+    const div = document.createElement('div');
+    div.style.cssText = 'position:relative;width:60px;height:80px';
+    div.innerHTML = `<img src="${src}" style="width:60px;height:80px;object-fit:cover;border-radius:2px"><span onclick="state.fashionPhotos.splice(${i},1);renderFashionEditor();update()" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.5);color:#fff;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer">×</span>`;
+    c.appendChild(div);
+  });
+}
+
+// ─── MOODBOARD PHOTOS ────────────────────────────────────
+function addMoodboardPhotos(input) {
+  const files = Array.from(input.files).slice(0, 12 - state.moodboardPhotos.length);
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => { state.moodboardPhotos.push(e.target.result); renderMoodboardEditor(); update(); };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+function renderMoodboardEditor() {
+  const c = document.getElementById('moodboardEditor'); c.innerHTML = '';
+  state.moodboardPhotos.forEach((src,i) => {
+    const div = document.createElement('div');
+    div.style.cssText = 'position:relative;width:70px;height:70px';
+    div.innerHTML = `<img src="${src}" style="width:70px;height:70px;object-fit:cover;border-radius:2px"><span onclick="state.moodboardPhotos.splice(${i},1);renderMoodboardEditor();update()" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.5);color:#fff;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer">×</span>`;
+    c.appendChild(div);
+  });
+}
+
+// ─── SINGLE PHOTO ─────────────────────────────────────────
+function loadSinglePhoto(input, previewId) {
+  const file = input.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const el = document.getElementById(previewId);
+    el.innerHTML = `<img src="${e.target.result}" alt="" style="width:100%;height:100%;object-fit:cover">`;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ─── IMPORT JSON FROM QUESTIONNAIRE ───────────────────────
+function importJSON(input) {
+  const file = input.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const d = JSON.parse(e.target.result);
+      // Fill basic fields from questionnaire JSON
+      if(d.meta?.client) document.getElementById('clientName').value = d.meta.client;
+      if(d.meta?.service && d.meta.service !== 'Пока не знаю') {
+        const sel = document.getElementById('serviceType');
+        for(let o of sel.options) { if(d.meta.service.includes(o.value)) { sel.value = o.value; break; } }
+      }
+      // Lifestyle note → cover subtitle
+      if(d.lifestyle?.description) document.getElementById('colorTypeDesc').value = d.lifestyle.description;
+      // Desired image → archetype hint
+      if(d.psychology?.desired_image) {
+        const desired = d.psychology.desired_image;
+        document.getElementById('archetypeSub').value = desired;
+      }
+      // Style icon
+      if(d.preferences?.style_icon) {
+        const cur = document.getElementById('colorTypeQuote').value;
+        if(!cur) document.getElementById('colorTypeQuote').value = 'Ориентир: ' + d.preferences.style_icon;
+      }
+      // Body notes → figure desc
+      if(d.psychology?.body_notes) document.getElementById('figureDesc').value = d.psychology.body_notes;
+      // Profile tags → show in banner
+      const tags = d.profile_tags || [];
+      const notes = d.profile_notes || '';
+      const banner = document.getElementById('importBanner');
+      banner.textContent = '✓ Анкета загружена: ' + d.meta?.client + (tags.length ? ' · ' + tags.join(', ') : '') + (notes ? ' — ' + notes.substring(0,80)+'...' : '');
+      banner.classList.add('visible');
+      update();
+    } catch(err) { alert('Ошибка чтения JSON: ' + err.message); }
+    input.value = '';
+  };
+  reader.readAsText(file);
+}
+function loadPhoto(input, previewId, miniId) {
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const src = e.target.result;
+    document.getElementById(previewId).innerHTML = `<img src="${src}" alt="Фото клиента">`;
+    if(miniId) {
+      const mini = document.getElementById(miniId);
+      mini.innerHTML = `<img src="${src}" alt="">`;
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+// ─── THEMES ───────────────────────────────────────────────
+function setTheme(theme, el) {
+  document.querySelectorAll('.theme-dot').forEach(d => d.classList.remove('active'));
+  el.classList.add('active');
+  const root = document.documentElement;
+  if(theme === 'warm') {
+    root.style.setProperty('--cream','#F5F0E8');
+    root.style.setProperty('--warm-white','#FDFAF5');
+    root.style.setProperty('--beige','#E8DDD0');
+    root.style.setProperty('--taupe','#C4B5A0');
+    root.style.setProperty('--brown','#8B7355');
+    root.style.setProperty('--dark','#3D3228');
+    root.style.setProperty('--accent','#A67C5B');
+    root.style.setProperty('--soft-green','#B8C4B0');
+    root.style.setProperty('--soft-rose','#D4A9A0');
+  } else if(theme === 'cool') {
+    root.style.setProperty('--cream','#EEF0F2');
+    root.style.setProperty('--warm-white','#F8F9FA');
+    root.style.setProperty('--beige','#DDE2E8');
+    root.style.setProperty('--taupe','#A8B5C0');
+    root.style.setProperty('--brown','#6B7D8A');
+    root.style.setProperty('--dark','#2A3540');
+    root.style.setProperty('--accent','#5B8FA6');
+    root.style.setProperty('--soft-green','#A0B4C0');
+    root.style.setProperty('--soft-rose','#B0A8C0');
+  } else if(theme === 'dark') {
+    root.style.setProperty('--cream','#2A2520');
+    root.style.setProperty('--warm-white','#1E1A16');
+    root.style.setProperty('--beige','#3D3228');
+    root.style.setProperty('--taupe','#6B5B4E');
+    root.style.setProperty('--brown','#9B8B7A');
+    root.style.setProperty('--dark','#F0EDE6');
+    root.style.setProperty('--accent','#C4985A');
+    root.style.setProperty('--soft-green','#7A9B8A');
+    root.style.setProperty('--soft-rose','#C4A098');
+  }
+}
+
+// ─── EXPORT JSON ──────────────────────────────────────────
+function exportJSON() {
+  const data = {
+    meta: {
+      client: document.getElementById('clientName').value,
+      service: document.getElementById('serviceType').value,
+      stylist: document.getElementById('stylistName').value,
+      date: new Date().toISOString().split('T')[0],
+    },
+    colortype: {
+      name: document.getElementById('colorTypeName').value,
+      quote: document.getElementById('colorTypeQuote').value,
+      description: document.getElementById('colorTypeDesc').value,
+    },
+    palette: {
+      base: state.baseSwatches,
+      accent: state.accentSwatches,
+      avoid: state.avoidList,
+    },
+    figure: {
+      type: document.getElementById('figureType').value,
+      subtitle: document.getElementById('figureSub').value,
+      description: document.getElementById('figureDesc').value,
+      recommendations: state.figureRecs,
+    },
+    archetype: {
+      name: document.getElementById('archetypeName').value,
+      subtitle: document.getElementById('archetypeSub').value,
+      columns: [
+        { title: document.getElementById('arch1Title').value, text: document.getElementById('arch1Text').value },
+        { title: document.getElementById('arch2Title').value, text: document.getElementById('arch2Text').value },
+      ],
+    },
+    outfits: state.outfits,
+    hair: {
+      type: document.getElementById('hairType').value,
+      subtitle: document.getElementById('hairSub').value,
+      description: document.getElementById('hairDesc').value,
+      tags: document.getElementById('hairTags').value,
+    },
+    shopping: {
+      categories: [1,2,3].map(n => ({
+        name: document.getElementById('shopCat'+n).value,
+        items: state.shopItems[n]||[],
+      })),
+    },
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `style-card-${data.meta.client.replace(/\s+/g,'-').toLowerCase()}.json`;
+  a.click();
+}
+
+init();
+</script>
+</body>
+</html>
