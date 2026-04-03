@@ -3,263 +3,172 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Анкета клиента — Стилист Екатерина Ерёмина</title>
+<title>Анкета — Стилист Екатерина Ерёмина</title>
+<meta name="description" content="Заполните анкету перед консультацией со стилистом">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --background:#ffffff;
-  --foreground:#0a0a0a;
-  --card:#ffffff;
-  --card-foreground:#0a0a0a;
-  --muted:#f5f5f5;
-  --muted-foreground:#737373;
-  --border:#e5e5e5;
-  --input:#e5e5e5;
-  --primary:#18181b;
-  --primary-foreground:#fafafa;
-  --secondary:#f5f5f5;
-  --secondary-foreground:#18181b;
-  --accent:#f5f5f5;
-  --accent-foreground:#18181b;
-  --ring:#a1a1aa;
-  --radius:0.5rem;
+  --bg:#ffffff;--fg:#0a0a0a;
+  --muted:#f5f5f5;--muted-fg:#737373;
+  --border:#e5e5e5;--input:#e5e5e5;
+  --primary:#18181b;--primary-fg:#fafafa;
+  --accent:#7c3aed;--accent-light:#ede9fe;
+  --ring:#a1a1aa;--radius:0.5rem;
   --font:'Inter',system-ui,-apple-system,sans-serif;
+  --success:#16a34a;--success-bg:#dcfce7;
+  --warn:#f59e0b;--warn-bg:#fef3c7;
+  --info:#2563eb;--info-bg:#dbeafe;
 }
-body{font-family:var(--font);background:#fafafa;color:var(--foreground);min-height:100vh;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font);background:#fafafa;color:var(--fg);min-height:100vh;-webkit-font-smoothing:antialiased}
 
-/* Hero */
-.hero{
-  background:var(--background);
-  border-bottom:1px solid var(--border);
-  padding:48px 40px 40px;
-  text-align:center;
-}
-.hero-eyebrow{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted-foreground);margin-bottom:12px;font-weight:500}
-.hero-title{font-size:clamp(24px,4vw,36px);font-weight:600;line-height:1.2;margin-bottom:12px;letter-spacing:-0.025em;color:var(--foreground)}
-.hero-title em{font-style:normal;background:linear-gradient(135deg,#7c3aed,#2563eb);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero-desc{font-size:14px;color:var(--muted-foreground);max-width:480px;margin:0 auto;line-height:1.7}
-.hero-time{
-  display:inline-flex;align-items:center;gap:8px;margin-top:20px;
-  padding:6px 16px;border:1px solid var(--border);border-radius:9999px;
-  font-size:12px;color:var(--muted-foreground);font-weight:500;
-  background:var(--background);
-}
+/* ===== HERO ===== */
+.hero{background:var(--bg);border-bottom:1px solid var(--border);padding:48px 24px 40px;text-align:center}
+.hero-avatar{width:64px;height:64px;border-radius:50%;background:var(--accent-light);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px}
+.hero-eyebrow{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted-fg);margin-bottom:8px;font-weight:500}
+.hero-title{font-size:clamp(24px,4vw,32px);font-weight:600;line-height:1.2;margin-bottom:10px;letter-spacing:-.025em}
+.hero-title em{font-style:normal;color:var(--accent)}
+.hero-desc{font-size:14px;color:var(--muted-fg);max-width:460px;margin:0 auto;line-height:1.7}
+.hero-meta{display:flex;justify-content:center;gap:16px;margin-top:20px}
+.hero-tag{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border:1px solid var(--border);border-radius:9999px;font-size:12px;color:var(--muted-fg);font-weight:500;background:var(--bg)}
 
-/* Progress */
-.progress-bar-wrap{
-  background:var(--background);
-  border-bottom:1px solid var(--border);
-  padding:14px 40px;
-  position:sticky;top:0;z-index:10;
-  display:flex;align-items:center;gap:16px;
-  backdrop-filter:blur(8px);
-  background:rgba(255,255,255,.9);
-}
-.progress-steps{display:flex;gap:4px;flex:1}
+/* ===== PROGRESS ===== */
+.progress-wrap{background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 24px;position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:16px}
+.progress-steps{display:flex;gap:3px;flex:1}
 .progress-step{height:2px;flex:1;border-radius:9999px;background:var(--border);transition:background .4s}
-.progress-step.done{background:var(--foreground)}
-.progress-step.active{background:#7c3aed}
-.progress-label{font-size:12px;color:var(--muted-foreground);white-space:nowrap;font-weight:500}
+.progress-step.done{background:var(--fg)}
+.progress-step.active{background:var(--accent)}
+.progress-label{font-size:12px;color:var(--muted-fg);white-space:nowrap;font-weight:500}
 
-/* Form body */
-.form-body{max-width:640px;margin:0 auto;padding:40px 24px 80px}
-
-/* Blocks */
-.block{display:none;animation:fadeIn .35s ease}
+/* ===== FORM ===== */
+.form-body{max-width:600px;margin:0 auto;padding:36px 20px 80px}
+.block{display:none;animation:fadeIn .3s ease}
 .block.active{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-.block-header{margin-bottom:32px}
-.block-num{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-foreground);margin-bottom:8px;font-weight:500}
-.block-title{font-size:24px;font-weight:600;color:var(--foreground);line-height:1.3;margin-bottom:8px;letter-spacing:-0.025em}
-.block-sub{font-size:14px;color:var(--muted-foreground);line-height:1.7}
+.block-header{margin-bottom:28px}
+.block-num{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;font-weight:600}
+.block-title{font-size:22px;font-weight:600;color:var(--fg);line-height:1.3;margin-bottom:6px;letter-spacing:-.02em}
+.block-sub{font-size:14px;color:var(--muted-fg);line-height:1.7}
 
-/* Card wrapper for each block */
-.block > .block-header ~ .question,
-.block > .psycho-note,
-.block > .nav-row {
-  /* keep as is */
-}
-
-/* Questions */
-.question{margin-bottom:28px}
-.q-label{font-size:14px;font-weight:500;color:var(--foreground);margin-bottom:6px;line-height:1.5}
-.q-hint{font-size:13px;color:var(--muted-foreground);margin-bottom:10px;line-height:1.6}
+/* ===== QUESTIONS ===== */
+.question{margin-bottom:24px}
+.q-label{font-size:14px;font-weight:500;color:var(--fg);margin-bottom:6px;line-height:1.5}
+.q-hint{font-size:13px;color:var(--muted-fg);margin-bottom:8px;line-height:1.6}
 .q-required{color:#ef4444;margin-left:2px}
 
-/* Inputs */
 input[type=text],input[type=email],textarea{
-  width:100%;
-  background:var(--background);
-  border:1px solid var(--input);
-  padding:10px 14px;
-  font-family:var(--font);
-  font-size:14px;
-  color:var(--foreground);
-  outline:none;
-  transition:border-color .15s,box-shadow .15s;
-  border-radius:var(--radius);
-  line-height:1.5;
+  width:100%;background:var(--bg);border:1px solid var(--input);
+  padding:10px 14px;font-family:var(--font);font-size:14px;color:var(--fg);
+  outline:none;transition:border-color .15s,box-shadow .15s;
+  border-radius:var(--radius);line-height:1.5;
 }
 input::placeholder,textarea::placeholder{color:#a3a3a3}
-input:focus,textarea:focus{border-color:var(--ring);box-shadow:0 0 0 3px rgba(161,161,170,.15)}
-textarea{resize:vertical;min-height:88px}
+input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,58,237,.1)}
+textarea{resize:vertical;min-height:80px}
 
-/* Chips */
+/* ===== CHIPS ===== */
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{
-  padding:8px 16px;
-  border:1px solid var(--border);
-  background:var(--background);
-  font-family:var(--font);
-  font-size:13px;
-  color:var(--foreground);
-  cursor:pointer;
-  border-radius:var(--radius);
-  transition:all .15s;
-  user-select:none;
-  font-weight:400;
+  padding:8px 16px;border:1px solid var(--border);background:var(--bg);
+  font-family:var(--font);font-size:13px;color:var(--fg);cursor:pointer;
+  border-radius:var(--radius);transition:all .15s;user-select:none;
 }
 .chip:hover{background:var(--muted);border-color:var(--ring)}
-.chip.selected{
-  background:var(--primary);
-  color:var(--primary-foreground);
-  border-color:var(--primary);
-}
+.chip.selected{background:var(--primary);color:var(--primary-fg);border-color:var(--primary)}
 
-/* Scale */
+/* ===== SCALE ===== */
 .scale-track{display:flex;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
 .scale-btn{
-  flex:1;padding:10px 4px;text-align:center;
-  background:var(--background);border:none;
-  border-right:1px solid var(--border);
-  font-family:var(--font);font-size:13px;color:var(--muted-foreground);
-  cursor:pointer;transition:all .15s;
+  flex:1;padding:10px 4px;text-align:center;background:var(--bg);border:none;
+  border-right:1px solid var(--border);font-family:var(--font);font-size:13px;
+  color:var(--muted-fg);cursor:pointer;transition:all .15s;
 }
 .scale-btn:last-child{border-right:none}
 .scale-btn:hover{background:var(--muted)}
-.scale-btn.selected{background:var(--primary);color:var(--primary-foreground)}
-.scale-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--muted-foreground);margin-top:8px}
+.scale-btn.selected{background:var(--accent);color:#fff}
+.scale-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--muted-fg);margin-top:8px}
 
-/* Psycho note */
+/* ===== NOTE ===== */
 .psycho-note{
-  background:var(--muted);
-  border:1px solid var(--border);
-  border-left:3px solid #7c3aed;
-  padding:14px 18px;
-  margin-bottom:28px;
-  font-size:13px;
-  line-height:1.7;
-  color:var(--muted-foreground);
-  border-radius:0 var(--radius) var(--radius) 0;
+  background:var(--accent-light);border:1px solid #c4b5fd;border-left:3px solid var(--accent);
+  padding:12px 16px;margin-bottom:24px;font-size:13px;line-height:1.7;
+  color:#5b21b6;border-radius:0 var(--radius) var(--radius) 0;
 }
 
-/* Navigation */
-.nav-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-top:36px;
-  padding-top:24px;
-  border-top:1px solid var(--border);
-}
+/* ===== NAV ===== */
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:32px;padding-top:20px;border-top:1px solid var(--border)}
 .btn-back{
-  background:var(--background);
-  border:1px solid var(--border);
-  padding:10px 20px;
-  font-family:var(--font);
-  font-size:13px;
-  color:var(--foreground);
-  cursor:pointer;
-  border-radius:var(--radius);
-  transition:all .15s;
-  font-weight:500;
+  background:var(--bg);border:1px solid var(--border);padding:10px 20px;
+  font-family:var(--font);font-size:13px;color:var(--fg);cursor:pointer;
+  border-radius:var(--radius);transition:all .15s;font-weight:500;
 }
 .btn-back:hover{background:var(--muted);border-color:var(--ring)}
 .btn-next{
-  background:var(--primary);
-  border:none;
-  padding:10px 24px;
-  font-family:var(--font);
-  font-size:13px;
-  color:var(--primary-foreground);
-  cursor:pointer;
-  border-radius:var(--radius);
-  transition:all .15s;
-  font-weight:500;
+  background:var(--primary);border:none;padding:10px 24px;
+  font-family:var(--font);font-size:13px;color:var(--primary-fg);cursor:pointer;
+  border-radius:var(--radius);transition:all .15s;font-weight:500;
 }
 .btn-next:hover{background:#27272a}
+.btn-submit{
+  background:var(--accent);border:none;padding:12px 28px;
+  font-family:var(--font);font-size:14px;color:#fff;cursor:pointer;
+  border-radius:var(--radius);transition:all .15s;font-weight:500;
+}
+.btn-submit:hover{background:#6d28d9}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed}
 
-/* Result */
+/* ===== RESULT ===== */
 .result-wrap{display:none}
 .result-wrap.active{display:block;animation:fadeIn .5s ease}
-.result-hero{text-align:center;padding:48px 0 32px}
-.result-check{
-  width:56px;height:56px;border-radius:50%;
-  background:#dcfce7;color:#16a34a;
-  display:flex;align-items:center;justify-content:center;
-  margin:0 auto 16px;font-size:24px;font-weight:600;
-}
-.result-title{font-size:28px;font-weight:600;color:var(--foreground);margin-bottom:8px;letter-spacing:-0.025em}
-.result-sub{font-size:14px;color:var(--muted-foreground);line-height:1.7}
+.result-hero{text-align:center;padding:48px 0 24px}
+.result-icon{width:64px;height:64px;border-radius:50%;background:var(--success-bg);color:var(--success);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px}
+.result-title{font-size:26px;font-weight:600;color:var(--fg);margin-bottom:8px;letter-spacing:-.02em}
+.result-sub{font-size:14px;color:var(--muted-fg);line-height:1.7;max-width:400px;margin:0 auto}
 
-/* Summary card */
-.stylist-summary{
-  background:var(--background);
-  border:1px solid var(--border);
-  padding:24px 28px;
-  margin-top:24px;
-  border-radius:var(--radius);
-  box-shadow:0 1px 3px rgba(0,0,0,.04),0 1px 2px rgba(0,0,0,.06);
-}
-.summary-label{
-  font-size:11px;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--muted-foreground);margin-bottom:14px;
-  padding-bottom:8px;border-bottom:1px solid var(--border);
-  font-weight:600;
-}
-.summary-row{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start}
-.summary-key{font-size:13px;color:var(--muted-foreground);min-width:150px;flex-shrink:0;padding-top:1px;font-weight:500}
-.summary-val{font-size:14px;color:var(--foreground);line-height:1.6;flex:1}
+.result-card{background:var(--bg);border:1px solid var(--border);padding:24px;margin-top:24px;border-radius:var(--radius);box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.result-card h3{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-fg);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border);font-weight:600}
+.result-row{display:flex;gap:12px;margin-bottom:8px;align-items:flex-start;font-size:14px}
+.result-key{color:var(--muted-fg);min-width:140px;flex-shrink:0;font-weight:500;font-size:13px}
+.result-val{color:var(--fg);line-height:1.6;flex:1}
 
-/* Badges */
-.profile-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
-.profile-badge{padding:4px 12px;font-size:12px;border-radius:9999px;border:1px solid;font-weight:500}
-.badge-trigger{background:#fef3c7;border-color:#fde68a;color:#92400e}
-.badge-service{background:#dbeafe;border-color:#bfdbfe;color:#1e40af}
-.badge-priority{background:#dcfce7;border-color:#bbf7d0;color:#166534}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.badge{padding:4px 12px;font-size:12px;border-radius:9999px;border:1px solid;font-weight:500}
+.badge-trigger{background:var(--warn-bg);border-color:#fde68a;color:#92400e}
+.badge-service{background:var(--info-bg);border-color:#bfdbfe;color:#1e40af}
+.badge-priority{background:var(--success-bg);border-color:#bbf7d0;color:#166534}
 
-/* Export */
-.export-btn{
-  width:100%;margin-top:20px;
-  background:var(--primary);color:var(--primary-foreground);
-  border:none;padding:12px;
-  font-family:var(--font);font-size:13px;font-weight:500;
-  cursor:pointer;border-radius:var(--radius);
-  transition:background .15s;
-}
-.export-btn:hover{background:#27272a}
+.sending-status{text-align:center;margin-top:20px;padding:12px;border-radius:var(--radius);font-size:13px}
+.status-sending{background:var(--accent-light);color:#5b21b6}
+.status-ok{background:var(--success-bg);color:var(--success)}
+.status-err{background:#fef2f2;color:#dc2626}
 
-/* Responsive */
+/* ===== RESPONSIVE ===== */
 @media(max-width:600px){
-  .hero{padding:36px 20px 32px}
+  .hero{padding:36px 16px 28px}
   .form-body{padding:28px 16px 60px}
-  .progress-bar-wrap{padding:12px 16px}
-  .block-title{font-size:20px}
-  .summary-row{flex-direction:column;gap:2px}
-  .summary-key{min-width:auto}
+  .progress-wrap{padding:12px 16px}
+  .result-row{flex-direction:column;gap:2px}
+  .result-key{min-width:auto}
+  .hero-meta{flex-direction:column;align-items:center;gap:8px}
 }
 </style>
 </head>
 <body>
+
 <div class="hero">
+  <div class="hero-avatar">✨</div>
   <div class="hero-eyebrow">Стилист Екатерина Ерёмина</div>
-  <h1 class="hero-title">Анкета клиента<br><em>перед началом работы</em></h1>
-  <p class="hero-desc">Чем подробнее вы ответите — тем точнее я смогу помочь. Здесь нет правильных и неправильных ответов.</p>
-  <div class="hero-time">⏱ около 7–10 минут</div>
+  <h1 class="hero-title">Анкета <em>перед консультацией</em></h1>
+  <p class="hero-desc">Заполните анкету — это поможет мне подготовиться к нашей работе и сразу предложить то, что подходит именно вам.</p>
+  <div class="hero-meta">
+    <div class="hero-tag">⏱ 7–10 минут</div>
+    <div class="hero-tag">🔒 Конфиденциально</div>
+  </div>
 </div>
-<div class="progress-bar-wrap">
+
+<div class="progress-wrap">
   <div class="progress-steps">
     <div class="progress-step active" id="ps1"></div>
     <div class="progress-step" id="ps2"></div>
@@ -269,8 +178,10 @@ textarea{resize:vertical;min-height:88px}
   </div>
   <div class="progress-label" id="progressLabel">Шаг 1 из 5</div>
 </div>
+
 <div class="form-body">
 
+<!-- БЛОК 1: Знакомство -->
 <div class="block active" id="block1">
   <div class="block-header">
     <div class="block-num">Шаг 1 / 5</div>
@@ -284,11 +195,12 @@ textarea{resize:vertical;min-height:88px}
   <div class="nav-row"><div></div><button class="btn-next" onclick="goTo(2)">Далее →</button></div>
 </div>
 
+<!-- БЛОК 2: Запрос -->
 <div class="block" id="block2">
   <div class="block-header">
     <div class="block-num">Шаг 2 / 5</div>
     <h2 class="block-title">Что привело вас ко мне?</h2>
-    <p class="block-sub">Здесь важно говорить честно. Именно это поможет дать вам не просто красивые образы, а то, что реально изменит ваши отношения с гардеробом.</p>
+    <p class="block-sub">Здесь важно говорить честно — именно это поможет дать то, что реально изменит ваши отношения с гардеробом.</p>
   </div>
   <div class="question"><div class="q-label">Что привело вас к стилисту? <span class="q-required">*</span></div><div class="q-hint">Расскажите своими словами — что происходит, что надоело?</div><textarea id="q_trigger" placeholder="Например: каждое утро трачу час на выбор одежды и всё равно чувствую себя не так..."></textarea></div>
   <div class="question"><div class="q-label">Узнаёте себя? Выберите всё, что откликается</div><div class="chips" id="chips_trigger"><div class="chip" data-val="Стресс каждое утро">Каждое утро — стресс «что надеть»</div><div class="chip" data-val="Полный шкаф — надеть нечего">Полный шкаф, а надеть нечего</div><div class="chip" data-val="Не нравлюсь себе в зеркале">Не нравлюсь себе в зеркале</div><div class="chip" data-val="Хочу перемен — начну с себя">Хочу перемен — начну с себя</div><div class="chip" data-val="Новая работа или роль">Новая работа или роль</div><div class="chip" data-val="Изменилась фигура">Изменилась фигура</div><div class="chip" data-val="Новый этап в жизни">Новый этап в жизни</div><div class="chip" data-val="Просто хочу нравиться себе">Просто хочу нравиться себе</div><div class="chip" data-val="Не понимаю свой стиль">Не понимаю свой стиль</div><div class="chip" data-val="Трачу деньги — и всё не то">Трачу деньги — и всё не то</div></div></div>
@@ -297,11 +209,12 @@ textarea{resize:vertical;min-height:88px}
   <div class="nav-row"><button class="btn-back" onclick="goTo(1)">← Назад</button><button class="btn-next" onclick="goTo(3)">Далее →</button></div>
 </div>
 
+<!-- БЛОК 3: Образ жизни -->
 <div class="block" id="block3">
   <div class="block-header">
     <div class="block-num">Шаг 3 / 5</div>
     <h2 class="block-title">Ваш образ жизни</h2>
-    <p class="block-sub">Одежда должна работать в вашей реальной жизни — не в Instagram, а в конкретных ситуациях каждый день.</p>
+    <p class="block-sub">Одежда должна работать в вашей реальной жизни — в конкретных ситуациях каждый день.</p>
   </div>
   <div class="question"><div class="q-label">Как выглядит ваша стандартная неделя?</div><div class="q-hint">Где бываете, какие ситуации требуют разной одежды?</div><textarea id="q_lifestyle" placeholder="Пн–пт офис с дресс-кодом, пятница свободный стиль, в выходные дача и встречи с подругами..."></textarea></div>
   <div class="question"><div class="q-label">В каких ситуациях важно хорошо выглядеть?</div><div class="chips" id="chips_situations"><div class="chip" data-val="Работа / офис">Работа / офис</div><div class="chip" data-val="Деловые встречи">Деловые встречи</div><div class="chip" data-val="Повседневно">Повседневно / дома</div><div class="chip" data-val="Свидания">Свидания</div><div class="chip" data-val="Выходы в свет">Выходы в свет</div><div class="chip" data-val="Спорт">Спорт</div><div class="chip" data-val="Путешествия">Путешествия</div><div class="chip" data-val="Везде важно">Везде важно</div></div></div>
@@ -311,11 +224,12 @@ textarea{resize:vertical;min-height:88px}
   <div class="nav-row"><button class="btn-back" onclick="goTo(2)">← Назад</button><button class="btn-next" onclick="goTo(4)">Далее →</button></div>
 </div>
 
+<!-- БЛОК 4: Психология стиля -->
 <div class="block" id="block4">
   <div class="block-header">
     <div class="block-num">Шаг 4 / 5</div>
     <h2 class="block-title">Вы и ваш стиль</h2>
-    <p class="block-sub">Этот блок — самый важный. Здесь скрываются ответы на вопрос «почему не работает» даже при полном гардеробе.</p>
+    <p class="block-sub">Самый важный блок. Здесь скрываются ответы на вопрос «почему не работает» даже при полном гардеробе.</p>
   </div>
   <div class="psycho-note">Здесь нет правильных ответов. Отвечайте первое, что приходит в голову — это важнее обдуманных ответов.</div>
   <div class="question"><div class="q-label">Как вы себя чувствуете, когда одеваетесь утром?</div><div class="chips" id="chips_morning_feel"><div class="chip" data-val="Раздражение и стресс">Раздражение, стресс</div><div class="chip" data-val="Безразличие">Мне всё равно</div><div class="chip" data-val="Неуверенность">Неуверенность</div><div class="chip" data-val="Привычка без удовольствия">Привычка без удовольствия</div><div class="chip" data-val="Удовольствие иногда">Удовольствие иногда</div><div class="chip" data-val="Радость">Радость каждый день</div></div></div>
@@ -324,16 +238,17 @@ textarea{resize:vertical;min-height:88px}
   <div class="question"><div class="q-label">Как, по-вашему, вас воспринимают окружающие?</div><div class="chips" id="chips_perception"><div class="chip" data-val="Строгая / деловая">Строгая / деловая</div><div class="chip" data-val="Мягкая / домашняя">Мягкая / домашняя</div><div class="chip" data-val="Скромная / незаметная">Скромная / незаметная</div><div class="chip" data-val="Яркая / стильная">Яркая / стильная</div><div class="chip" data-val="Спортивная">Спортивная</div><div class="chip" data-val="Не знаю">Не знаю</div></div></div>
   <div class="question"><div class="q-label">Какой образ хотите транслировать?</div><div class="q-hint">Как хотите, чтобы вас воспринимали?</div><div class="chips" id="chips_desired"><div class="chip" data-val="Уверенная / сильная">Уверенная / сильная</div><div class="chip" data-val="Элегантная / женственная">Элегантная / женственная</div><div class="chip" data-val="Успешная / статусная">Успешная / статусная</div><div class="chip" data-val="Привлекательная">Привлекательная</div><div class="chip" data-val="Творческая / яркая">Творческая / яркая</div><div class="chip" data-val="Спокойная / гармоничная">Спокойная / гармоничная</div><div class="chip" data-val="Молодая / свежая">Молодая / свежая</div></div></div>
   <div class="question">
-    <div class="q-label">Оцените ваши отношения с собственным телом сейчас</div>
+    <div class="q-label">Оцените ваши отношения с собственным телом</div>
     <div class="scale-track" id="scale_body">
       <button class="scale-btn" onclick="setScale('scale_body',1)">1</button><button class="scale-btn" onclick="setScale('scale_body',2)">2</button><button class="scale-btn" onclick="setScale('scale_body',3)">3</button><button class="scale-btn" onclick="setScale('scale_body',4)">4</button><button class="scale-btn" onclick="setScale('scale_body',5)">5</button><button class="scale-btn" onclick="setScale('scale_body',6)">6</button><button class="scale-btn" onclick="setScale('scale_body',7)">7</button><button class="scale-btn" onclick="setScale('scale_body',8)">8</button><button class="scale-btn" onclick="setScale('scale_body',9)">9</button><button class="scale-btn" onclick="setScale('scale_body',10)">10</button>
     </div>
     <div class="scale-labels"><span>Не принимаю себя</span><span>Люблю своё тело</span></div>
   </div>
-  <div class="question"><div class="q-label">Был ли период, когда вы чувствовали себя красивой и уверенной?</div><textarea id="q_peak" placeholder="Да, лет 5 назад после похудения я чувствовала себя потрясающе..."></textarea></div>
+  <div class="question"><div class="q-label">Был ли период, когда чувствовали себя красивой и уверенной?</div><textarea id="q_peak" placeholder="Да, лет 5 назад после похудения я чувствовала себя потрясающе..."></textarea></div>
   <div class="nav-row"><button class="btn-back" onclick="goTo(3)">← Назад</button><button class="btn-next" onclick="goTo(5)">Далее →</button></div>
 </div>
 
+<!-- БЛОК 5: Вкус и контакт -->
 <div class="block" id="block5">
   <div class="block-header">
     <div class="block-num">Шаг 5 / 5</div>
@@ -347,35 +262,32 @@ textarea{resize:vertical;min-height:88px}
   <div class="question"><div class="q-label">Любимые бренды или маркетплейсы</div><input type="text" id="q_brands" placeholder="Maje, Sandro, Zara, Lamoda..."></div>
   <div class="question"><div class="q-label">Носите каблуки?</div><div class="chips" id="chips_heels"><div class="chip" data-val="Да, часто">Да, часто</div><div class="chip" data-val="Только на выход">Только на выход</div><div class="chip" data-val="Редко">Редко</div><div class="chip" data-val="Нет">Нет</div></div></div>
   <div class="question"><div class="q-label">Что-то ещё важное?</div><textarea id="q_extra" placeholder="Любые мысли, пожелания, страхи — всё важно..."></textarea></div>
-  <div class="question"><div class="q-label">Ваш контакт для связи <span class="q-required">*</span></div><div class="q-hint">Телефон или email</div><input type="text" id="q_contact" placeholder="+7 900 000 00 00 или email@mail.ru"></div>
-  <div class="nav-row"><button class="btn-back" onclick="goTo(4)">← Назад</button><button class="btn-next" onclick="submitForm()">Отправить анкету ✓</button></div>
+  <div class="question"><div class="q-label">Ваш контакт для связи <span class="q-required">*</span></div><div class="q-hint">Телефон, Telegram или email — чтобы я могла с вами связаться</div><input type="text" id="q_contact" placeholder="+7 900 000 00 00 или @telegram"></div>
+  <div class="nav-row"><button class="btn-back" onclick="goTo(4)">← Назад</button><button class="btn-submit" onclick="submitForm()" id="submitBtn">Отправить анкету ✓</button></div>
 </div>
 
+<!-- РЕЗУЛЬТАТ -->
 <div class="result-wrap" id="resultBlock">
   <div class="result-hero">
-    <div class="result-check">✓</div>
-    <h2 class="result-title">Анкета получена!</h2>
-    <p class="result-sub">Спасибо, <strong id="resultName"></strong>. Я изучу ваши ответы и напишу вам в течение 24 часов.</p>
+    <div class="result-icon">✓</div>
+    <h2 class="result-title">Спасибо!</h2>
+    <p class="result-sub">Ваша анкета отправлена. Я изучу ответы и свяжусь с вами в течение 24 часов.</p>
   </div>
-  <div class="stylist-summary">
-    <div class="summary-label">Карточка клиента — для стилиста</div>
-    <div class="summary-row"><div class="summary-key">Имя / контакт</div><div class="summary-val" id="sum_name">—</div></div>
-    <div class="summary-row"><div class="summary-key">Услуга</div><div class="summary-val" id="sum_service">—</div></div>
-    <div class="summary-row"><div class="summary-key">Главный запрос</div><div class="summary-val" id="sum_trigger">—</div></div>
-    <div class="summary-row"><div class="summary-key">Цель</div><div class="summary-val" id="sum_goal">—</div></div>
-    <div class="summary-row"><div class="summary-key">Образ жизни</div><div class="summary-val" id="sum_lifestyle">—</div></div>
-    <div class="summary-row"><div class="summary-key">Отношения с телом</div><div class="summary-val" id="sum_body">—</div></div>
-    <div class="summary-row"><div class="summary-key">Желаемый образ</div><div class="summary-val" id="sum_desired">—</div></div>
-    <div class="summary-row"><div class="summary-key">Бюджет</div><div class="summary-val" id="sum_budget">—</div></div>
-    <div class="summary-row"><div class="summary-key">Ограничения</div><div class="summary-val" id="sum_limits">—</div></div>
-    <div style="margin-top:16px"><div class="summary-label">Профиль клиента</div><div class="profile-badges" id="profileBadges"></div></div>
-    <div style="margin-top:16px"><div class="summary-label">Психологический контекст</div><div class="summary-val" id="sum_psycho" style="font-size:13px;line-height:1.8">—</div></div>
-    <button class="export-btn" onclick="exportClientJSON()">↓ Экспорт JSON → открыть в редакторе карты стиля</button>
+  <div id="sendingStatus"></div>
+  <div class="result-card">
+    <h3>Ваши ответы (кратко)</h3>
+    <div class="result-row"><div class="result-key">Имя</div><div class="result-val" id="sum_name">—</div></div>
+    <div class="result-row"><div class="result-key">Услуга</div><div class="result-val" id="sum_service">—</div></div>
+    <div class="result-row"><div class="result-key">Главный запрос</div><div class="result-val" id="sum_trigger">—</div></div>
+    <div class="result-row"><div class="result-key">Цель</div><div class="result-val" id="sum_goal">—</div></div>
+    <div class="result-row"><div class="result-key">Желаемый образ</div><div class="result-val" id="sum_desired">—</div></div>
   </div>
 </div>
 
 </div>
+
 <script>
+// ===== CHIPS =====
 document.querySelectorAll('.chips').forEach(function(c){
   var single=['chips_age','chips_dresscode','chips_budget','chips_morning_feel','chips_heels','chips_service'].includes(c.id);
   c.querySelectorAll('.chip').forEach(function(chip){
@@ -385,21 +297,42 @@ document.querySelectorAll('.chips').forEach(function(c){
     });
   });
 });
+
+// ===== SCALE =====
 var scaleVals={};
 function setScale(id,val){
   scaleVals[id]=val;
   document.querySelectorAll('#'+id+' .scale-btn').forEach(function(b,i){b.classList.toggle('selected',i+1<=val)});
 }
+
+// ===== NAVIGATION =====
 var cur=1;
 function goTo(n){
+  // Валидация на шаге 1
+  if(n>1 && cur===1){
+    if(!v('q_name').trim()){alert('Пожалуйста, введите ваше имя');return}
+    if(!gc('chips_service')){alert('Выберите интересующую услугу');return}
+  }
+  // Валидация на последнем шаге
+  if(cur===5 && n>5){
+    if(!v('q_contact').trim()){alert('Пожалуйста, оставьте контакт для связи');return}
+  }
   document.getElementById('block'+cur).classList.remove('active');
-  cur=n;document.getElementById('block'+n).classList.add('active');
+  cur=n;
+  document.getElementById('block'+n).classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
-  for(var i=1;i<=5;i++){var el=document.getElementById('ps'+i);el.className='progress-step'+(i<n?' done':i===n?' active':'')}
+  for(var i=1;i<=5;i++){
+    var el=document.getElementById('ps'+i);
+    el.className='progress-step'+(i<n?' done':i===n?' active':'');
+  }
   document.getElementById('progressLabel').textContent='Шаг '+n+' из 5';
 }
+
+// ===== HELPERS =====
 function gc(id){return[...document.querySelectorAll('#'+id+' .chip.selected')].map(function(c){return c.dataset.val}).join(', ')}
 function v(id){return(document.getElementById(id)||{}).value||''}
+
+// ===== ПРОФИЛЬ =====
 function buildProfile(){
   var tr=gc('chips_trigger'),bs=scaleVals['scale_body']||0,mo=gc('chips_morning_feel'),de=gc('chips_desired');
   var tags=[],notes=[];
@@ -415,32 +348,121 @@ function buildProfile(){
   var bud=gc('chips_budget');if(bud)tags.push({t:'Бюджет: '+bud,c:'badge-service'});
   return{tags:tags,notes:notes.join(' ')||'Заполните анкету полностью для профилирования.'};
 }
-function submitForm(){
+
+// ===== СБОР ДАННЫХ =====
+function collectAllData(){
+  var p=buildProfile();
+  return {
+    meta:{
+      client:v('q_name'),
+      contact:v('q_contact'),
+      city:v('q_city'),
+      age:gc('chips_age'),
+      service:gc('chips_service'),
+      date:new Date().toISOString(),
+      stylist:'Екатерина Ерёмина'
+    },
+    intake:{
+      trigger:v('q_trigger'),
+      trigger_tags:gc('chips_trigger'),
+      goal:v('q_goal'),
+      what_to_change:v('q_change')
+    },
+    lifestyle:{
+      description:v('q_lifestyle'),
+      situations:gc('chips_situations'),
+      dresscode:gc('chips_dresscode'),
+      budget:gc('chips_budget'),
+      limits:v('q_limits')
+    },
+    psychology:{
+      morning_feeling:gc('chips_morning_feel'),
+      best_moment:v('q_best_moment'),
+      body_notes:v('q_body'),
+      body_score:scaleVals['scale_body']||null,
+      current_perception:gc('chips_perception'),
+      desired_image:gc('chips_desired'),
+      peak_period:v('q_peak')
+    },
+    preferences:{
+      style_icon:v('q_icon'),
+      colors_worn:gc('chips_colors'),
+      colors_avoid:v('q_no_colors'),
+      style_preference:gc('chips_style_pref'),
+      brands:v('q_brands'),
+      heels:gc('chips_heels'),
+      extra:v('q_extra')
+    },
+    analysis:{
+      profile_tags:p.tags.map(function(t){return{label:t.t,category:t.c}}),
+      profile_notes:p.notes,
+      summary:{
+        key_triggers:gc('chips_trigger').split(', ').filter(Boolean),
+        morning_state:gc('chips_morning_feel'),
+        body_acceptance:scaleVals['scale_body']||null,
+        desired_perception:gc('chips_desired').split(', ').filter(Boolean),
+        current_perception:gc('chips_perception').split(', ').filter(Boolean),
+        style_direction:gc('chips_style_pref').split(', ').filter(Boolean),
+      }
+    }
+  };
+}
+
+// ===== ОТПРАВКА =====
+function setStatus(cls,text){
+  var el=document.getElementById('sendingStatus');
+  el.className='sending-status '+cls;
+  el.textContent=text;
+}
+
+async function submitForm(){
+  // Валидация
+  if(!v('q_contact').trim()){alert('Пожалуйста, оставьте контакт для связи');return}
+
+  var btn=document.getElementById('submitBtn');
+  btn.disabled=true;
+  btn.textContent='Отправка...';
+
+  // Собираем данные
+  var data=collectAllData();
+  var p=buildProfile();
+
+  // Показываем результат
   document.getElementById('block5').classList.remove('active');
   document.getElementById('resultBlock').classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
   document.querySelectorAll('.progress-step').forEach(function(s){s.className='progress-step done'});
   document.getElementById('progressLabel').textContent='Готово ✓';
-  var name=v('q_name')||'клиент';
-  document.getElementById('resultName').textContent=name;
-  document.getElementById('sum_name').textContent=name+' · '+v('q_contact');
-  document.getElementById('sum_service').textContent=gc('chips_service')||'—';
-  document.getElementById('sum_trigger').textContent=v('q_trigger')||gc('chips_trigger')||'—';
-  document.getElementById('sum_goal').textContent=v('q_goal')||'—';
-  document.getElementById('sum_lifestyle').textContent=v('q_lifestyle')||gc('chips_situations')||'—';
-  document.getElementById('sum_body').textContent=(scaleVals['scale_body']||'—')+'/10'+(v('q_body')?' · '+v('q_body'):'');
-  document.getElementById('sum_desired').textContent=gc('chips_desired')||'—';
-  document.getElementById('sum_budget').textContent=gc('chips_budget')||'—';
-  document.getElementById('sum_limits').textContent=v('q_limits')||'не указано';
-  var p=buildProfile();
-  document.getElementById('profileBadges').innerHTML=p.tags.map(function(t){return'<span class="profile-badge '+t.c+'">'+t.t+'</span>'}).join('');
-  document.getElementById('sum_psycho').textContent=p.notes;
-}
-function exportClientJSON(){
-  var p=buildProfile();
-  var data={meta:{client:v('q_name'),contact:v('q_contact'),city:v('q_city'),age:gc('chips_age'),service:gc('chips_service'),date:new Date().toISOString().split('T')[0],stylist:'Екатерина Ерёмина'},intake:{trigger:v('q_trigger'),trigger_tags:gc('chips_trigger'),goal:v('q_goal'),what_to_change:v('q_change')},lifestyle:{description:v('q_lifestyle'),situations:gc('chips_situations'),dresscode:gc('chips_dresscode'),budget:gc('chips_budget'),limits:v('q_limits')},psychology:{morning_feeling:gc('chips_morning_feel'),best_moment:v('q_best_moment'),body_notes:v('q_body'),body_score:scaleVals['scale_body']||null,current_perception:gc('chips_perception'),desired_image:gc('chips_desired'),peak_period:v('q_peak')},preferences:{style_icon:v('q_icon'),colors_worn:gc('chips_colors'),colors_avoid:v('q_no_colors'),style_preference:gc('chips_style_pref'),brands:v('q_brands'),heels:gc('chips_heels'),extra:v('q_extra')},profile_tags:p.tags.map(function(t){return t.t}),profile_notes:p.notes};
-  var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='client-'+(v('q_name')||'noname').replace(/\s+/g,'-').toLowerCase()+'.json';a.click();
+
+  document.getElementById('sum_name').textContent=data.meta.client;
+  document.getElementById('sum_service').textContent=data.meta.service||'—';
+  document.getElementById('sum_trigger').textContent=data.intake.trigger||data.intake.trigger_tags||'—';
+  document.getElementById('sum_goal').textContent=data.intake.goal||'—';
+  document.getElementById('sum_desired').textContent=data.psychology.desired_image||'—';
+
+  // Отправляем на сервер
+  setStatus('status-sending','⏳ Отправляем вашу анкету стилисту...');
+
+  try{
+    var res=await fetch('/api/submit',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(data)
+    });
+    var result=await res.json();
+    if(result.ok){
+      if(result.telegram){
+        setStatus('status-ok','✅ Анкета отправлена! Екатерина получит её в Telegram.');
+      } else {
+        setStatus('status-ok','✅ Анкета сохранена! Екатерина свяжется с вами.');
+      }
+    } else {
+      throw new Error('server error');
+    }
+  }catch(e){
+    setStatus('status-err','Не удалось отправить автоматически. Анкета сохранена, мы свяжемся с вами.');
+    console.error('Submit error:', e);
+  }
 }
 </script>
 </body>
