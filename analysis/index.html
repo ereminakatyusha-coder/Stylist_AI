@@ -234,6 +234,14 @@ body{font-family:var(--font);background:#fafafa;color:var(--fg);min-height:100vh
       <input type="text" id="clientName" placeholder="Как вас зовут?">
     </div>
 
+    <div class="anketa-upload" style="margin-bottom:24px">
+      <label style="font-size:14px;font-weight:500;display:block;margin-bottom:6px">Анкета клиента <span style="color:var(--muted-fg);font-weight:400">(JSON из анкеты — улучшит анализ)</span></label>
+      <div id="anketaSlot" style="border:2px dashed var(--border);border-radius:var(--radius);padding:16px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg)" onclick="document.getElementById('anketaFile').click()">
+        <div style="font-size:13px;color:var(--muted-fg)" id="anketaLabel">📋 Нажмите чтобы загрузить JSON анкеты</div>
+        <input type="file" id="anketaFile" accept=".json" style="display:none" onchange="loadAnketa(this)">
+      </div>
+    </div>
+
     <button class="btn-analyze" id="analyzeBtn" disabled onclick="runAnalysis()">✦ Получить анализ</button>
     <div class="error-msg" id="errorMsg"></div>
   </div>
@@ -360,6 +368,27 @@ function getApiKey() {
 // ===== STATE =====
 var photos = {};
 var analysisResult = null;
+var anketaData = null;
+
+// ===== ANKETA UPLOAD =====
+function loadAnketa(input) {
+  if (!input.files || !input.files[0]) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      anketaData = JSON.parse(e.target.result);
+      var name = anketaData.meta && anketaData.meta.client;
+      if (name) document.getElementById('clientName').value = name;
+      var slot = document.getElementById('anketaSlot');
+      slot.style.borderColor = 'var(--success)';
+      slot.style.borderStyle = 'solid';
+      document.getElementById('anketaLabel').innerHTML = '✅ Анкета загружена' + (name ? ' — ' + name : '');
+    } catch(err) {
+      alert('Ошибка чтения JSON файла');
+    }
+  };
+  reader.readAsText(input.files[0]);
+}
 
 // ===== PHOTO UPLOAD =====
 function compressImage(file, maxSize) {
@@ -489,7 +518,7 @@ async function runAnalysis() {
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 3000,
-        system: 'Ты — профессиональный стилист-имиджмейкер с 15-летним опытом. Ты анализируешь внешность клиента по фотографиям и даёшь структурированные рекомендации. Все ответы на русском языке. Отвечай ТОЛЬКО валидным JSON без markdown-обёрток, без ```json, без пояснений — только чистый JSON объект.',
+        system: 'Ты — профессиональный стилист-имиджмейкер. Отвечай СТРОГО валидным JSON. Правила: 1) Никаких markdown-обёрток (без ```). 2) Никаких комментариев. 3) Никакого текста до или после JSON. 4) Все строки в двойных кавычках. 5) Нет trailing commas. 6) Все ответы на русском. Начинай ответ с символа { и заканчивай символом }.',
         messages: [{ role: 'user', content: content }]
       })
     });
@@ -502,18 +531,29 @@ async function runAnalysis() {
     var data = await resp.json();
     var text = data.content.find(function(b) { return b.type === 'text'; }).text;
 
-    // Чистим от markdown обёрток
-    text = text.replace(/^```json\n?/,'').replace(/\n?```$/,'').trim();
+    // Чистим от markdown обёрток и мусора
+    text = text.replace(/^[\s\S]*?(\{)/,'$1'); // всё до первой {
+    text = text.replace(/\}[^}]*$/,'}'); // всё после последней }
+    // Убираем trailing commas перед } или ]
+    text = text.replace(/,\s*([}\]])/g,'$1');
+    // Убираем комментарии // ...
+    text = text.replace(/\/\/[^\n]*/g,'');
 
     var result;
     try {
       result = JSON.parse(text);
-    } catch(e) {
+    } catch(e1) {
       // Пробуем извлечь JSON из текста
-      var match = text.match(/\{[\s\S]*\}/);
-      if (match) {
-        result = JSON.parse(match[0]);
-      } else {
+      try {
+        var match = text.match(/\{[\s\S]*\}/);
+        if (match) {
+          var cleaned = match[0].replace(/,\s*([}\]])/g,'$1').replace(/\/\/[^\n]*/g,'');
+          result = JSON.parse(cleaned);
+        } else {
+          throw e1;
+        }
+      } catch(e2) {
+        console.error('Raw response:', text);
         throw new Error('Не удалось разобрать ответ. Попробуйте ещё раз.');
       }
     }
@@ -539,7 +579,27 @@ async function runAnalysis() {
 // ===== PROMPT =====
 function buildPrompt() {
   var name = document.getElementById('clientName').value || 'клиент';
-  return 'Проанализируй внешность клиента (' + name + ') по загруженным фотографиям.\n\n' +
+  var anketaContext = '';
+  if (anketaData) {
+    var a = anketaData;
+    var parts = [];
+    if (a.meta && a.meta.age) parts.push('Возраст: ' + a.meta.age);
+    if (a.meta && a.meta.service) parts.push('Услуга: ' + a.meta.service);
+    if (a.lifestyle && a.lifestyle.description) parts.push('Образ жизни: ' + a.lifestyle.description);
+    if (a.lifestyle && a.lifestyle.situations) parts.push('Важно выглядеть хорошо: ' + a.lifestyle.situations);
+    if (a.lifestyle && a.lifestyle.dresscode) parts.push('Дресс-код: ' + a.lifestyle.dresscode);
+    if (a.lifestyle && a.lifestyle.budget) parts.push('Бюджет: ' + a.lifestyle.budget);
+    if (a.psychology && a.psychology.body_notes) parts.push('Что скрыть/подчеркнуть: ' + a.psychology.body_notes);
+    if (a.psychology && a.psychology.desired_image) parts.push('Желаемый образ: ' + a.psychology.desired_image);
+    if (a.psychology && a.psychology.current_perception) parts.push('Текущее восприятие: ' + a.psychology.current_perception);
+    if (a.preferences && a.preferences.style_preference) parts.push('Предпочитаемый стиль: ' + a.preferences.style_preference);
+    if (a.preferences && a.preferences.colors_worn) parts.push('Носит цвета: ' + a.preferences.colors_worn);
+    if (a.preferences && a.preferences.colors_avoid) parts.push('Избегает цвета: ' + a.preferences.colors_avoid);
+    if (a.preferences && a.preferences.style_icon) parts.push('Стилевой ориентир: ' + a.preferences.style_icon);
+    if (a.intake && a.intake.goal) parts.push('Цель: ' + a.intake.goal);
+    if (parts.length) anketaContext = '\n\nДанные из анкеты клиента:\n' + parts.join('\n') + '\n\nУчитывай эти данные при анализе — адаптируй рекомендации под образ жизни, цели и предпочтения клиента.\n';
+  }
+  return 'Проанализируй внешность клиента (' + name + ') по загруженным фотографиям.' + anketaContext + '\n\n' +
     'Верни JSON со следующей структурой:\n' +
     '{\n' +
     '  "colortype": {\n' +
