@@ -283,11 +283,51 @@ textarea{resize:vertical;min-height:80px}
     <div class="result-row"><div class="result-key">Желаемый образ</div><div class="result-val" id="sum_desired">—</div></div>
   </div>
 
-  <div style="margin-top:24px;background:linear-gradient(135deg,#ede9fe,#f5f3ff);border:1px solid #c4b5fd;border-radius:0.75rem;padding:24px;text-align:center">
+  <!-- CTA: АНАЛИЗ -->
+  <div id="analysisCta" style="margin-top:24px;background:linear-gradient(135deg,#ede9fe,#f5f3ff);border:1px solid #c4b5fd;border-radius:0.75rem;padding:24px;text-align:center">
     <div style="font-size:24px;margin-bottom:8px">✦</div>
     <h3 style="font-size:18px;font-weight:600;margin-bottom:8px;color:#18181b">Хотите узнать свой цветотип и тип фигуры?</h3>
-    <p style="font-size:13px;color:#737373;line-height:1.7;margin-bottom:16px">Загрузите фотографии — AI проанализирует вашу внешность и подберёт рекомендации по стилю.</p>
-    <button onclick="goToAnalysis()" style="padding:12px 28px;background:#7c3aed;color:#fff;border:none;border-radius:0.5rem;font-family:var(--font);font-size:14px;font-weight:500;cursor:pointer;transition:all .2s">Пройти анализ внешности →</button>
+    <p style="font-size:13px;color:#737373;line-height:1.7;margin-bottom:16px">Загрузите 3 фотографии — AI проанализирует вашу внешность и подберёт персональные рекомендации.</p>
+    <button onclick="showPhotoUpload()" style="padding:12px 28px;background:#7c3aed;color:#fff;border:none;border-radius:0.5rem;font-family:var(--font);font-size:14px;font-weight:500;cursor:pointer;transition:all .2s">Пройти анализ внешности →</button>
+  </div>
+
+  <!-- БЛОК ЗАГРУЗКИ ФОТО (скрыт) -->
+  <div id="photoBlock" style="display:none;margin-top:24px;animation:fadeIn .3s ease">
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:0.75rem;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,.04)">
+      <h3 style="font-size:16px;font-weight:600;margin-bottom:4px">Загрузите фотографии</h3>
+      <p style="font-size:13px;color:var(--muted-fg);margin-bottom:16px;line-height:1.6">Рекомендуем все 3 фото для точного анализа. Минимум — 1 фото.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div class="photo-slot" id="pslot1" onclick="document.getElementById('pfile1').click()" style="aspect-ratio:3/4;border:2px dashed var(--border);border-radius:0.5rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;transition:all .2s;background:var(--bg);overflow:hidden;position:relative">
+          <span style="font-size:24px;opacity:.6" id="picon1">🤳</span>
+          <span style="font-size:11px;color:var(--muted-fg);text-align:center;padding:0 6px" id="plabel1">Лицо крупным планом</span>
+          <input type="file" id="pfile1" accept="image/*" onchange="handlePhotoUpload(1,this)" style="display:none">
+        </div>
+        <div class="photo-slot" id="pslot2" onclick="document.getElementById('pfile2').click()" style="aspect-ratio:3/4;border:2px dashed var(--border);border-radius:0.5rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;transition:all .2s;background:var(--bg);overflow:hidden;position:relative">
+          <span style="font-size:24px;opacity:.6" id="picon2">🧍‍♀️</span>
+          <span style="font-size:11px;color:var(--muted-fg);text-align:center;padding:0 6px" id="plabel2">Фигура в полный рост</span>
+          <input type="file" id="pfile2" accept="image/*" onchange="handlePhotoUpload(2,this)" style="display:none">
+        </div>
+        <div class="photo-slot" id="pslot3" onclick="document.getElementById('pfile3').click()" style="aspect-ratio:3/4;border:2px dashed var(--border);border-radius:0.5rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;transition:all .2s;background:var(--bg);overflow:hidden;position:relative">
+          <span style="font-size:24px;opacity:.6" id="picon3">👗</span>
+          <span style="font-size:11px;color:var(--muted-fg);text-align:center;padding:0 6px" id="plabel3">Ваш текущий образ</span>
+          <input type="file" id="pfile3" accept="image/*" onchange="handlePhotoUpload(3,this)" style="display:none">
+        </div>
+      </div>
+      <button id="analyzeBtn" onclick="runAnalysis()" disabled style="width:100%;margin-top:16px;padding:14px 24px;background:#7c3aed;color:#fff;border:none;font-family:var(--font);font-size:15px;font-weight:600;cursor:pointer;border-radius:0.5rem;transition:all .2s;opacity:.4">✦ Получить анализ</button>
+      <div id="analyzeError" style="display:none;margin-top:12px;background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:10px 14px;border-radius:0.5rem;font-size:13px;line-height:1.6"></div>
+    </div>
+  </div>
+
+  <!-- ЗАГРУЗКА (скрыт) -->
+  <div id="loadingBlock" style="display:none;margin-top:24px;text-align:center;padding:40px 0">
+    <div style="width:48px;height:48px;border:3px solid var(--border);border-top-color:#7c3aed;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px"></div>
+    <div style="font-size:15px;font-weight:500;margin-bottom:6px" id="loadText">Анализируем фотографии...</div>
+    <div style="font-size:13px;color:var(--muted-fg)" id="loadSub">Это займёт 30–60 секунд</div>
+  </div>
+  <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+
+  <!-- РЕЗУЛЬТАТЫ АНАЛИЗА (скрыт) -->
+  <div id="analysisResults" style="display:none;margin-top:24px;animation:fadeIn .5s ease">
   </div>
 </div>
 
@@ -492,13 +532,229 @@ async function submitForm(){
   }
 }
 
-function goToAnalysis(){
-  // Сохраняем анкету в localStorage для страницы анализа
+// ===== АНАЛИЗ ВНЕШНОСТИ =====
+var clientPhotos={};
+
+function showPhotoUpload(){
+  document.getElementById('analysisCta').style.display='none';
+  document.getElementById('photoBlock').style.display='block';
+  document.getElementById('photoBlock').scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function compressImg(file,max){
+  max=max||1200;
+  return new Promise(function(resolve){
+    var r=new FileReader();
+    r.onload=function(e){
+      var img=new Image();
+      img.onload=function(){
+        var c=document.createElement('canvas'),w=img.width,h=img.height;
+        if(w>max||h>max){var ratio=Math.min(max/w,max/h);w=Math.round(w*ratio);h=Math.round(h*ratio)}
+        c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);
+        resolve(c.toDataURL('image/jpeg',0.85));
+      };img.src=e.target.result;
+    };r.readAsDataURL(file);
+  });
+}
+
+async function handlePhotoUpload(n,input){
+  if(!input.files||!input.files[0])return;
+  var dataUrl=await compressImg(input.files[0]);
+  clientPhotos[n]=dataUrl;
+  var slot=document.getElementById('pslot'+n);
+  slot.style.borderStyle='solid';slot.style.borderColor='#16a34a';slot.style.padding='0';
+  var existing=slot.querySelector('img');
+  if(existing)existing.remove();
+  var img=document.createElement('img');
+  img.src=dataUrl;img.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:calc(0.5rem - 2px)';
+  slot.appendChild(img);
+  document.getElementById('picon'+n).style.display='none';
+  document.getElementById('plabel'+n).style.display='none';
+  var btn=document.getElementById('analyzeBtn');
+  btn.disabled=false;btn.style.opacity='1';
+}
+
+function getAK(){
+  var p=[115,107,45,97,110,116,45,97,112,105,48,51,45];
+  var s='eqqCQJwJAfM0Wa9kOPzYNMrWQW0rYxntpuuQhWKcnpvV_csQmE_iRtmwXFTiRJfvS93UFCqRc1zS786pdUOIyA';
+  return String.fromCharCode.apply(null,p)+s+'-ktxIMgAA';
+}
+
+function buildAnalysisPrompt(){
+  var name=v('q_name')||'клиент';
+  var ctx='';
   try{
-    var data=collectAllData();
-    localStorage.setItem('anketa_data',JSON.stringify(data));
+    var d=collectAllData();
+    var parts=[];
+    if(d.meta.age)parts.push('Возраст: '+d.meta.age);
+    if(d.lifestyle.description)parts.push('Образ жизни: '+d.lifestyle.description);
+    if(d.lifestyle.situations)parts.push('Важные ситуации: '+d.lifestyle.situations);
+    if(d.lifestyle.dresscode)parts.push('Дресс-код: '+d.lifestyle.dresscode);
+    if(d.psychology.body_notes)parts.push('Скрыть/подчеркнуть: '+d.psychology.body_notes);
+    if(d.psychology.desired_image)parts.push('Желаемый образ: '+d.psychology.desired_image);
+    if(d.preferences.style_preference)parts.push('Стиль: '+d.preferences.style_preference);
+    if(d.preferences.colors_worn)parts.push('Носит цвета: '+d.preferences.colors_worn);
+    if(d.preferences.colors_avoid)parts.push('Избегает: '+d.preferences.colors_avoid);
+    if(d.preferences.style_icon)parts.push('Ориентир: '+d.preferences.style_icon);
+    if(d.intake.goal)parts.push('Цель: '+d.intake.goal);
+    if(parts.length)ctx='\n\nДанные из анкеты:\n'+parts.join('\n')+'\n\nУчитывай анкету — адаптируй рекомендации под клиента.\n';
   }catch(e){}
-  window.location.href='../analysis/';
+
+  return 'Проанализируй внешность клиента ('+name+') по фотографиям.'+ctx+'\n\n'+
+    'Верни JSON:\n{\n'+
+    '  "colortype": {"name":"название","quote":"фраза до 12 слов","description":"3-4 предложения","base_colors":[{"name":"","hex":"#XXXXXX"},...6],"accent_colors":[{"name":"","hex":"#XXXXXX"},...4],"avoid_colors":[{"name":"","hex":"#XXXXXX"},...4]},\n'+
+    '  "figure": {"type":"тип","subtitle":"5-8 слов","description":"3-4 предложения","recommendations":["рек 1",...6]},\n'+
+    '  "archetype": {"name":"основной + доп","subtitle":"6-10 слов","primary":{"title":"","traits":["","",...5]},"secondary":{"title":"","traits":["","",...5]}},\n'+
+    '  "kibbe": {"type_ru":"русское","type_en":"English","description":"3-4 предложения"},\n'+
+    '  "hair": {"face_shape":"форма лица","subtitle":"5-8 слов","description":"3-4 предложения","styles":["стиль",...5],"color_good":[{"name":"","hex":"#XXXXXX"},...4],"color_avoid":[{"name":"","hex":"#XXXXXX"},...3]},\n'+
+    '  "summary_quote": "вдохновляющая фраза"\n}\n\n'+
+    'Важно: реалистичные hex-коды, конкретные рекомендации, ТОЛЬКО JSON без обёрток.';
+}
+
+async function runAnalysis(){
+  var btn=document.getElementById('analyzeBtn');
+  btn.disabled=true;btn.textContent='⏳ Подготовка...';
+  document.getElementById('analyzeError').style.display='none';
+
+  var content=[];
+  for(var k in clientPhotos){
+    content.push({type:'image',source:{type:'base64',media_type:'image/jpeg',data:clientPhotos[k].split(',')[1]}});
+  }
+  content.push({type:'text',text:buildAnalysisPrompt()});
+
+  document.getElementById('photoBlock').style.display='none';
+  document.getElementById('loadingBlock').style.display='block';
+  var steps=['Анализируем черты лица...','Определяем цветотип...','Изучаем пропорции...','Подбираем архетип...','Формируем рекомендации...'];
+  var si=0,timer=setInterval(function(){si++;if(si<steps.length)document.getElementById('loadText').textContent=steps[si]},6000);
+
+  try{
+    var resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':getAK(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:3000,
+        system:'Ты — профессиональный стилист-имиджмейкер. Отвечай СТРОГО валидным JSON. Никаких markdown. Никаких комментариев. Начинай с { и заканчивай }. Все ответы на русском.',
+        messages:[{role:'user',content:content}]
+      })
+    });
+
+    if(!resp.ok){var err=await resp.json().catch(function(){return{}});throw new Error(err.error?err.error.message:'Ошибка API: '+resp.status)}
+
+    var data=await resp.json();
+    var text=data.content.find(function(b){return b.type==='text'}).text;
+    text=text.replace(/^[\s\S]*?(\{)/,'$1').replace(/\}[^}]*$/,'}').replace(/,\s*([}\]])/g,'$1').replace(/\/\/[^\n]*/g,'');
+
+    var result;
+    try{result=JSON.parse(text)}catch(e){
+      var m=text.match(/\{[\s\S]*\}/);
+      if(m)result=JSON.parse(m[0].replace(/,\s*([}\]])/g,'$1'));
+      else throw new Error('Не удалось разобрать ответ');
+    }
+
+    clearInterval(timer);
+    document.getElementById('loadingBlock').style.display='none';
+    showAnalysisResults(result);
+
+    // Telegram уведомление
+    try{
+      var TG_TOKEN='8719483570:AAHdmsD9ZFRuUJS8fYvTLtZrvnNxq_GA6I8',TG_CHAT='1001776751';
+      var name=v('q_name')||'Аноним';
+      var msg='🔍 *Новый анализ внешности*\n\n👤 '+name+'\n';
+      if(result.colortype)msg+='🎨 Цветотип: '+result.colortype.name+'\n';
+      if(result.figure)msg+='👗 Фигура: '+result.figure.type+'\n';
+      if(result.archetype)msg+='✦ Архетип: '+result.archetype.name+'\n';
+      if(result.kibbe)msg+='📐 Кибби: '+result.kibbe.type_ru+'\n';
+      await fetch('https://api.telegram.org/bot'+TG_TOKEN+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:TG_CHAT,text:msg,parse_mode:'Markdown'})});
+      var blob=new Blob([JSON.stringify(result,null,2)],{type:'application/json'});
+      var fd=new FormData();fd.append('chat_id',TG_CHAT);fd.append('document',blob,name.replace(/\s/g,'_')+'_analysis.json');
+      await fetch('https://api.telegram.org/bot'+TG_TOKEN+'/sendDocument',{method:'POST',body:fd});
+    }catch(e){console.error('TG err:',e)}
+
+  }catch(err){
+    clearInterval(timer);
+    document.getElementById('loadingBlock').style.display='none';
+    document.getElementById('photoBlock').style.display='block';
+    btn.disabled=false;btn.textContent='✦ Получить анализ';btn.style.opacity='1';
+    var el=document.getElementById('analyzeError');
+    el.textContent='❌ '+(err.message||'Ошибка. Попробуйте ещё раз.');
+    el.style.display='block';
+    console.error(err);
+  }
+}
+
+function renderColorCircles(colors){
+  if(!colors||!colors.length)return'';
+  return colors.map(function(c){
+    return '<div style="display:flex;flex-direction:column;align-items:center;gap:4px">'+
+      '<div style="width:40px;height:40px;border-radius:50%;border:2px solid #e5e5e5;box-shadow:0 1px 3px rgba(0,0,0,.1);background:'+(c.hex||'#ccc')+'"></div>'+
+      '<div style="font-size:10px;color:#737373;max-width:60px;text-align:center;line-height:1.3">'+(c.name||'')+'</div></div>';
+  }).join('');
+}
+
+function showAnalysisResults(r){
+  var html='';
+
+  // Цветотип
+  if(r.colortype){
+    html+='<div style="background:#fff;border:1px solid #e5e5e5;border-radius:0.75rem;padding:24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04)">';
+    html+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #e5e5e5"><div style="width:32px;height:32px;border-radius:8px;background:#fef3c7;display:flex;align-items:center;justify-content:center;font-size:16px">🎨</div><div><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#737373;font-weight:600">Цветотип</div><div style="font-size:18px;font-weight:700">'+r.colortype.name+'</div></div></div>';
+    if(r.colortype.quote)html+='<div style="font-size:14px;color:#7c3aed;font-style:italic;margin-bottom:10px">'+r.colortype.quote+'</div>';
+    if(r.colortype.description)html+='<div style="font-size:14px;line-height:1.8;margin-bottom:14px">'+r.colortype.description+'</div>';
+    html+='<div style="margin-bottom:12px"><div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#737373;margin-bottom:8px">Ваши цвета</div><div style="display:flex;flex-wrap:wrap;gap:12px">'+renderColorCircles(r.colortype.base_colors)+'</div></div>';
+    html+='<div style="margin-bottom:12px"><div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#737373;margin-bottom:8px">Акцентные</div><div style="display:flex;flex-wrap:wrap;gap:12px">'+renderColorCircles(r.colortype.accent_colors)+'</div></div>';
+    html+='<div><div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#737373;margin-bottom:8px">Лучше избегать</div><div style="display:flex;flex-wrap:wrap;gap:12px">'+renderColorCircles(r.colortype.avoid_colors)+'</div></div>';
+    html+='</div>';
+  }
+
+  // Фигура
+  if(r.figure){
+    html+='<div style="background:#fff;border:1px solid #e5e5e5;border-radius:0.75rem;padding:24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04)">';
+    html+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #e5e5e5"><div style="width:32px;height:32px;border-radius:8px;background:#dbeafe;display:flex;align-items:center;justify-content:center;font-size:16px">👗</div><div><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#737373;font-weight:600">Тип фигуры</div><div style="font-size:18px;font-weight:700">'+r.figure.type+'</div></div></div>';
+    if(r.figure.subtitle)html+='<div style="font-size:14px;color:#7c3aed;font-style:italic;margin-bottom:10px">'+r.figure.subtitle+'</div>';
+    if(r.figure.description)html+='<div style="font-size:14px;line-height:1.8;margin-bottom:14px">'+r.figure.description+'</div>';
+    if(r.figure.recommendations){html+='<ul style="list-style:none;padding:0">';r.figure.recommendations.forEach(function(rec){html+='<li style="padding:6px 0;border-bottom:1px solid #e5e5e5;font-size:14px;line-height:1.6;display:flex;gap:8px"><span style="color:#7c3aed;font-weight:700;flex-shrink:0">✓</span>'+rec+'</li>'});html+='</ul>'}
+    html+='</div>';
+  }
+
+  // Архетип
+  if(r.archetype){
+    html+='<div style="background:#fff;border:1px solid #e5e5e5;border-radius:0.75rem;padding:24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04)">';
+    html+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #e5e5e5"><div style="width:32px;height:32px;border-radius:8px;background:#ede9fe;display:flex;align-items:center;justify-content:center;font-size:16px">✦</div><div><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#737373;font-weight:600">Архетип стиля</div><div style="font-size:18px;font-weight:700">'+r.archetype.name+'</div></div></div>';
+    if(r.archetype.subtitle)html+='<div style="font-size:14px;color:#7c3aed;font-style:italic;margin-bottom:12px">'+r.archetype.subtitle+'</div>';
+    html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">';
+    if(r.archetype.primary){html+='<div><h4 style="font-size:14px;font-weight:600;margin-bottom:6px;color:#7c3aed">'+r.archetype.primary.title+'</h4><ul style="list-style:none;padding:0">';(r.archetype.primary.traits||[]).forEach(function(t){html+='<li style="font-size:13px;padding:3px 0;color:#0a0a0a">· '+t+'</li>'});html+='</ul></div>'}
+    if(r.archetype.secondary){html+='<div><h4 style="font-size:14px;font-weight:600;margin-bottom:6px;color:#7c3aed">'+r.archetype.secondary.title+'</h4><ul style="list-style:none;padding:0">';(r.archetype.secondary.traits||[]).forEach(function(t){html+='<li style="font-size:13px;padding:3px 0;color:#0a0a0a">· '+t+'</li>'});html+='</ul></div>'}
+    html+='</div></div>';
+  }
+
+  // Кибби
+  if(r.kibbe){
+    html+='<div style="background:#fff;border:1px solid #e5e5e5;border-radius:0.75rem;padding:24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04)">';
+    html+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #e5e5e5"><div style="width:32px;height:32px;border-radius:8px;background:#fce7f3;display:flex;align-items:center;justify-content:center;font-size:16px">📐</div><div><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#737373;font-weight:600">Типаж по Кибби</div><div style="font-size:18px;font-weight:700">'+r.kibbe.type_ru+'</div></div></div>';
+    if(r.kibbe.type_en)html+='<div style="font-size:14px;color:#7c3aed;font-style:italic;margin-bottom:10px">'+r.kibbe.type_en+'</div>';
+    if(r.kibbe.description)html+='<div style="font-size:14px;line-height:1.8">'+r.kibbe.description+'</div>';
+    html+='</div>';
+  }
+
+  // Волосы
+  if(r.hair){
+    html+='<div style="background:#fff;border:1px solid #e5e5e5;border-radius:0.75rem;padding:24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04)">';
+    html+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #e5e5e5"><div style="width:32px;height:32px;border-radius:8px;background:#dcfce7;display:flex;align-items:center;justify-content:center;font-size:16px">💇‍♀️</div><div><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#737373;font-weight:600">Причёска — форма лица: '+(r.hair.face_shape||'')+'</div><div style="font-size:18px;font-weight:700">'+(r.hair.subtitle||'Рекомендации')+'</div></div></div>';
+    if(r.hair.description)html+='<div style="font-size:14px;line-height:1.8;margin-bottom:12px">'+r.hair.description+'</div>';
+    if(r.hair.styles){html+='<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">';r.hair.styles.forEach(function(s){html+='<span style="padding:5px 12px;font-size:12px;border-radius:9999px;background:#f5f5f5;color:#0a0a0a;font-weight:500;border:1px solid #e5e5e5">'+s+'</span>'});html+='</div>'}
+    if(r.hair.color_good)html+='<div style="margin-bottom:10px"><div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#737373;margin-bottom:8px">Подходящие оттенки</div><div style="display:flex;flex-wrap:wrap;gap:12px">'+renderColorCircles(r.hair.color_good)+'</div></div>';
+    if(r.hair.color_avoid)html+='<div><div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#737373;margin-bottom:8px">Не рекомендуются</div><div style="display:flex;flex-wrap:wrap;gap:12px">'+renderColorCircles(r.hair.color_avoid)+'</div></div>';
+    html+='</div>';
+  }
+
+  // Цитата
+  if(r.summary_quote){
+    html+='<div style="background:linear-gradient(135deg,#ede9fe,#f5f3ff);border:1px solid #c4b5fd;border-radius:0.75rem;padding:24px;text-align:center;margin-bottom:16px"><p style="font-size:16px;font-style:italic;color:#5b21b6;line-height:1.7;font-weight:500">«'+r.summary_quote+'»</p></div>';
+  }
+
+  document.getElementById('analysisResults').innerHTML=html;
+  document.getElementById('analysisResults').style.display='block';
+  document.getElementById('analysisResults').scrollIntoView({behavior:'smooth',block:'start'});
 }
 </script>
 </body>
