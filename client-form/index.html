@@ -282,6 +282,13 @@ textarea{resize:vertical;min-height:80px}
     <div class="result-row"><div class="result-key">Цель</div><div class="result-val" id="sum_goal">—</div></div>
     <div class="result-row"><div class="result-key">Желаемый образ</div><div class="result-val" id="sum_desired">—</div></div>
   </div>
+
+  <div style="margin-top:24px;background:linear-gradient(135deg,#ede9fe,#f5f3ff);border:1px solid #c4b5fd;border-radius:0.75rem;padding:24px;text-align:center">
+    <div style="font-size:24px;margin-bottom:8px">✦</div>
+    <h3 style="font-size:18px;font-weight:600;margin-bottom:8px;color:#18181b">Хотите узнать свой цветотип и тип фигуры?</h3>
+    <p style="font-size:13px;color:#737373;line-height:1.7;margin-bottom:16px">Загрузите фотографии — AI проанализирует вашу внешность и подберёт рекомендации по стилю.</p>
+    <button onclick="goToAnalysis()" style="padding:12px 28px;background:#7c3aed;color:#fff;border:none;border-radius:0.5rem;font-family:var(--font);font-size:14px;font-weight:500;cursor:pointer;transition:all .2s">Пройти анализ внешности →</button>
+  </div>
 </div>
 
 </div>
@@ -483,6 +490,15 @@ async function submitForm(){
     setStatus('status-err','Не удалось отправить автоматически. Пожалуйста, напишите нам напрямую.');
     console.error('Submit error:', e);
   }
+}
+
+function goToAnalysis(){
+  // Сохраняем анкету в localStorage для страницы анализа
+  try{
+    var data=collectAllData();
+    localStorage.setItem('anketa_data',JSON.stringify(data));
+  }catch(e){}
+  window.location.href='../analysis/';
 }
 </script>
 </body>

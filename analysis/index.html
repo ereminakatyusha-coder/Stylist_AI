@@ -370,25 +370,40 @@ var photos = {};
 var analysisResult = null;
 var anketaData = null;
 
-// ===== ANKETA UPLOAD =====
+// ===== ANKETA =====
 function loadAnketa(input) {
   if (!input.files || !input.files[0]) return;
   var reader = new FileReader();
   reader.onload = function(e) {
     try {
-      anketaData = JSON.parse(e.target.result);
-      var name = anketaData.meta && anketaData.meta.client;
-      if (name) document.getElementById('clientName').value = name;
-      var slot = document.getElementById('anketaSlot');
-      slot.style.borderColor = 'var(--success)';
-      slot.style.borderStyle = 'solid';
-      document.getElementById('anketaLabel').innerHTML = '✅ Анкета загружена' + (name ? ' — ' + name : '');
+      applyAnketa(JSON.parse(e.target.result));
     } catch(err) {
       alert('Ошибка чтения JSON файла');
     }
   };
   reader.readAsText(input.files[0]);
 }
+
+function applyAnketa(data) {
+  anketaData = data;
+  var name = data.meta && data.meta.client;
+  if (name) document.getElementById('clientName').value = name;
+  var slot = document.getElementById('anketaSlot');
+  slot.style.borderColor = 'var(--success)';
+  slot.style.borderStyle = 'solid';
+  document.getElementById('anketaLabel').innerHTML = '✅ Анкета загружена' + (name ? ' — ' + name : '');
+}
+
+// Автозагрузка анкеты из localStorage (после перехода с анкеты)
+(function() {
+  try {
+    var saved = localStorage.getItem('anketa_data');
+    if (saved) {
+      applyAnketa(JSON.parse(saved));
+      localStorage.removeItem('anketa_data');
+    }
+  } catch(e) {}
+})();
 
 // ===== PHOTO UPLOAD =====
 function compressImage(file, maxSize) {
