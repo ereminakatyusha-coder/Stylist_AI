@@ -160,7 +160,7 @@ textarea{resize:vertical;min-height:80px}
 <div class="hero">
   <div class="hero-avatar">✨</div>
   <div class="hero-eyebrow">Стилист Екатерина Ерёмина</div>
-  <h1 class="hero-title">Анкета <em>перед консультацией</em></h1>
+  <h1 class="hero-title"><em>Анкета</em> <span style="color:var(--muted-fg)">перед консультацией</span></h1>
   <p class="hero-desc">Заполните анкету — это поможет мне подготовиться к нашей работе и сразу предложить то, что подходит именно вам.</p>
   <div class="hero-meta">
     <div class="hero-tag">⏱ 7–10 минут</div>
@@ -189,7 +189,7 @@ textarea{resize:vertical;min-height:80px}
     <p class="block-sub">Расскажите немного о себе — это поможет мне лучше вас понять ещё до нашей встречи.</p>
   </div>
   <div class="question"><div class="q-label">Ваше имя <span class="q-required">*</span></div><input type="text" id="q_name" placeholder="Как вас зовут?"></div>
-  <div class="question"><div class="q-label">Возраст</div><div class="chips" id="chips_age"><div class="chip" data-val="до 25">до 25</div><div class="chip" data-val="25–34">25–34</div><div class="chip" data-val="35–44">35–44</div><div class="chip" data-val="45–54">45–54</div><div class="chip" data-val="55+">55+</div></div></div>
+  <div class="question"><div class="q-label">Возраст</div><input type="text" id="q_age" placeholder="32"></div>
   <div class="question"><div class="q-label">Город</div><input type="text" id="q_city" placeholder="Москва, Казань..."></div>
   <div class="question"><div class="q-label">Какая услуга вас интересует? <span class="q-required">*</span></div><div class="chips" id="chips_service"><div class="chip" data-val="Карта стиля">Карта стиля</div><div class="chip" data-val="Разбор гардероба">Разбор гардероба</div><div class="chip" data-val="Капсульный гардероб">Капсульный гардероб</div><div class="chip" data-val="Анализ внешности">Анализ внешности</div><div class="chip" data-val="Шоппинг">Шоппинг</div><div class="chip" data-val="Консультация">Консультация</div><div class="chip" data-val="Пока не знаю">Пока не знаю</div></div></div>
   <div class="nav-row"><div></div><button class="btn-next" onclick="goTo(2)">Далее →</button></div>
@@ -289,7 +289,7 @@ textarea{resize:vertical;min-height:80px}
 <script>
 // ===== CHIPS =====
 document.querySelectorAll('.chips').forEach(function(c){
-  var single=['chips_age','chips_dresscode','chips_budget','chips_morning_feel','chips_heels','chips_service'].includes(c.id);
+  var single=['chips_dresscode','chips_budget','chips_morning_feel','chips_heels'].includes(c.id);
   c.querySelectorAll('.chip').forEach(function(chip){
     chip.addEventListener('click',function(){
       if(single)c.querySelectorAll('.chip').forEach(function(x){x.classList.remove('selected')});
@@ -357,7 +357,7 @@ function collectAllData(){
       client:v('q_name'),
       contact:v('q_contact'),
       city:v('q_city'),
-      age:gc('chips_age'),
+      age:v('q_age'),
       service:gc('chips_service'),
       date:new Date().toISOString(),
       stylist:'Екатерина Ерёмина'
