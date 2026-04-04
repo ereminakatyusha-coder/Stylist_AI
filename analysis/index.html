@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Анализ внешности — Стилист Екатерина Ерёмина</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--fg:#0a0a0a;
+  --muted:#f5f5f5;--muted-fg:#737373;
+  --border:#e5e5e5;--input:#e5e5e5;
+  --primary:#18181b;--primary-fg:#fafafa;
+  --accent:#7c3aed;--accent-light:#ede9fe;--accent-dark:#6d28d9;
+  --ring:#a1a1aa;--radius:0.75rem;
+  --font:'Inter',system-ui,-apple-system,sans-serif;
+  --success:#16a34a;--success-bg:#dcfce7;
+  --warn:#f59e0b;--warn-bg:#fef3c7;
+  --info:#2563eb;--info-bg:#dbeafe;
+}
+body{font-family:var(--font);background:#fafafa;color:var(--fg);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* HERO */
+.hero{background:var(--bg);border-bottom:1px solid var(--border);padding:48px 24px 40px;text-align:center}
+.hero-avatar{width:64px;height:64px;border-radius:50%;background:var(--accent-light);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px}
+.hero-eyebrow{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted-fg);margin-bottom:8px;font-weight:500}
+.hero-title{font-size:clamp(24px,4vw,32px);font-weight:700;line-height:1.2;margin-bottom:10px;letter-spacing:-.025em}
+.hero-title em{font-style:normal;color:var(--accent)}
+.hero-desc{font-size:14px;color:var(--muted-fg);max-width:480px;margin:0 auto;line-height:1.7}
+.hero-meta{display:flex;justify-content:center;gap:12px;margin-top:20px;flex-wrap:wrap}
+.hero-tag{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border:1px solid var(--border);border-radius:9999px;font-size:12px;color:var(--muted-fg);font-weight:500;background:var(--bg)}
+
+/* CONTAINER */
+.container{max-width:640px;margin:0 auto;padding:36px 20px 80px}
+
+/* UPLOAD SECTION */
+.upload-section{margin-bottom:32px}
+.upload-title{font-size:16px;font-weight:600;margin-bottom:16px;color:var(--fg)}
+.upload-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.upload-slot{
+  position:relative;aspect-ratio:3/4;border:2px dashed var(--border);border-radius:var(--radius);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  cursor:pointer;transition:all .2s;background:var(--bg);overflow:hidden;
+}
+.upload-slot:hover{border-color:var(--accent);background:var(--accent-light)}
+.upload-slot.has-photo{border-style:solid;border-color:var(--success);padding:0}
+.upload-slot.has-photo img{width:100%;height:100%;object-fit:cover;border-radius:calc(var(--radius) - 2px)}
+.upload-slot .icon{font-size:28px;opacity:.6}
+.upload-slot .label{font-size:11px;color:var(--muted-fg);text-align:center;padding:0 8px;font-weight:500}
+.upload-slot input{display:none}
+.upload-slot.has-photo .icon,.upload-slot.has-photo .label{display:none}
+.upload-slot .remove-btn{
+  position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;
+  background:rgba(0,0,0,.6);color:#fff;border:none;cursor:pointer;font-size:14px;
+  display:none;align-items:center;justify-content:center;z-index:2;
+}
+.upload-slot.has-photo .remove-btn{display:flex}
+
+.upload-hint{font-size:12px;color:var(--muted-fg);margin-top:12px;line-height:1.6;text-align:center}
+
+/* NAME INPUT */
+.name-field{margin:24px 0}
+.name-field label{font-size:14px;font-weight:500;display:block;margin-bottom:6px}
+.name-field input{
+  width:100%;background:var(--bg);border:1px solid var(--input);padding:10px 14px;
+  font-family:var(--font);font-size:14px;color:var(--fg);outline:none;
+  transition:border-color .15s,box-shadow .15s;border-radius:var(--radius);
+}
+.name-field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,58,237,.1)}
+
+/* BUTTON */
+.btn-analyze{
+  width:100%;padding:14px 24px;background:var(--accent);color:#fff;border:none;
+  font-family:var(--font);font-size:15px;font-weight:600;cursor:pointer;
+  border-radius:var(--radius);transition:all .2s;margin-top:8px;
+}
+.btn-analyze:hover{background:var(--accent-dark);transform:translateY(-1px);box-shadow:0 4px 12px rgba(124,58,237,.3)}
+.btn-analyze:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* LOADING */
+.loading-wrap{display:none;text-align:center;padding:60px 20px}
+.loading-wrap.active{display:block}
+.loader{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 24px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:15px;color:var(--fg);font-weight:500;margin-bottom:8px}
+.loading-sub{font-size:13px;color:var(--muted-fg);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.loading-bar{width:100%;max-width:300px;height:4px;background:var(--border);border-radius:9999px;margin:20px auto 0;overflow:hidden}
+.loading-bar-inner{height:100%;background:var(--accent);border-radius:9999px;width:0%;transition:width .5s ease}
+
+/* ERROR */
+.error-msg{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:12px 16px;border-radius:var(--radius);font-size:13px;margin-top:16px;display:none;line-height:1.6}
+.error-msg.active{display:block}
+
+/* RESULTS */
+.results-wrap{display:none}
+.results-wrap.active{display:block;animation:fadeIn .5s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.results-hero{text-align:center;padding:40px 0 24px}
+.results-icon{width:64px;height:64px;border-radius:50%;background:var(--success-bg);color:var(--success);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px}
+.results-title{font-size:26px;font-weight:700;margin-bottom:8px;letter-spacing:-.02em}
+.results-sub{font-size:14px;color:var(--muted-fg);line-height:1.7}
+
+/* RESULT CARD */
+.r-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-top:20px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.r-card-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.r-card-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.r-card-icon.colortype{background:#fef3c7}
+.r-card-icon.figure{background:#dbeafe}
+.r-card-icon.archetype{background:var(--accent-light)}
+.r-card-icon.kibbe{background:#fce7f3}
+.r-card-icon.hair{background:#dcfce7}
+.r-card-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-fg);font-weight:600}
+.r-card-title{font-size:20px;font-weight:700;color:var(--fg);margin-bottom:4px;letter-spacing:-.02em}
+.r-card-quote{font-size:14px;color:var(--accent);font-style:italic;margin-bottom:12px}
+.r-card-desc{font-size:14px;color:var(--fg);line-height:1.8;margin-bottom:16px}
+
+/* COLORS */
+.colors-section{margin-bottom:16px}
+.colors-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted-fg);margin-bottom:10px}
+.colors-row{display:flex;flex-wrap:wrap;gap:12px}
+.color-item{display:flex;flex-direction:column;align-items:center;gap:4px}
+.color-circle{width:40px;height:40px;border-radius:50%;border:2px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.color-name{font-size:10px;color:var(--muted-fg);max-width:60px;text-align:center;line-height:1.3}
+.colors-avoid .color-circle{border-color:#fca5a5}
+
+/* RECS */
+.rec-list{list-style:none;padding:0}
+.rec-list li{padding:8px 0;border-bottom:1px solid var(--border);font-size:14px;line-height:1.6;display:flex;align-items:flex-start;gap:8px}
+.rec-list li:last-child{border-bottom:none}
+.rec-list li::before{content:"✓";color:var(--accent);font-weight:700;flex-shrink:0;margin-top:1px}
+
+/* ARCHETYPE COLS */
+.arch-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px}
+.arch-col h4{font-size:14px;font-weight:600;margin-bottom:8px;color:var(--accent)}
+.arch-col ul{list-style:none;padding:0}
+.arch-col li{font-size:13px;padding:4px 0;color:var(--fg);line-height:1.5}
+.arch-col li::before{content:"·";margin-right:6px;color:var(--accent);font-weight:700}
+
+/* TAGS */
+.tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tag{padding:5px 12px;font-size:12px;border-radius:9999px;background:var(--muted);color:var(--fg);font-weight:500;border:1px solid var(--border)}
+
+/* SUMMARY QUOTE */
+.summary-quote{
+  background:linear-gradient(135deg,var(--accent-light),#f5f3ff);border:1px solid #c4b5fd;
+  border-radius:var(--radius);padding:24px;margin-top:24px;text-align:center;
+}
+.summary-quote p{font-size:16px;font-style:italic;color:#5b21b6;line-height:1.7;font-weight:500}
+
+/* CTA */
+.cta-banner{
+  background:var(--primary);color:var(--primary-fg);border-radius:var(--radius);
+  padding:28px;margin-top:24px;text-align:center;
+}
+.cta-banner h3{font-size:18px;font-weight:600;margin-bottom:8px}
+.cta-banner p{font-size:13px;color:#a1a1aa;margin-bottom:16px;line-height:1.6}
+.cta-btn{
+  display:inline-block;padding:10px 24px;background:var(--accent);color:#fff;
+  text-decoration:none;border-radius:var(--radius);font-size:14px;font-weight:500;
+  transition:all .2s;border:none;cursor:pointer;font-family:var(--font);
+}
+.cta-btn:hover{background:var(--accent-dark)}
+
+/* ACTION BUTTONS */
+.action-buttons{display:flex;gap:10px;margin-top:24px}
+.btn-action{
+  flex:1;padding:12px 16px;border-radius:var(--radius);font-family:var(--font);
+  font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;text-align:center;
+}
+.btn-primary{background:var(--accent);color:#fff;border:none}
+.btn-primary:hover{background:var(--accent-dark)}
+.btn-secondary{background:var(--bg);color:var(--fg);border:1px solid var(--border)}
+.btn-secondary:hover{background:var(--muted)}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  .hero{padding:36px 16px 28px}
+  .container{padding:28px 16px 60px}
+  .upload-grid{grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .arch-cols{grid-template-columns:1fr}
+  .action-buttons{flex-direction:column}
+  .hero-meta{flex-direction:column;align-items:center;gap:8px}
+}
+</style>
+</head>
+<body>
+
+<!-- SCREEN 1: UPLOAD -->
+<div id="uploadScreen">
+  <div class="hero">
+    <div class="hero-avatar">✦</div>
+    <div class="hero-eyebrow">Стилист Екатерина Ерёмина</div>
+    <h1 class="hero-title"><em>Анализ</em> <span style="color:var(--muted-fg)">внешности</span></h1>
+    <p class="hero-desc">Загрузите фотографии — и получите профессиональный разбор: цветотип, тип фигуры, архетип стиля и рекомендации.</p>
+    <div class="hero-meta">
+      <div class="hero-tag">⏱ 1–2 минуты</div>
+      <div class="hero-tag">✦ AI-анализ</div>
+      <div class="hero-tag">🔒 Конфиденциально</div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="upload-section">
+      <div class="upload-title">Загрузите фотографии</div>
+      <div class="upload-grid">
+        <div class="upload-slot" id="slot1" onclick="document.getElementById('file1').click()">
+          <div class="icon">🤳</div>
+          <div class="label">Лицо крупным планом</div>
+          <input type="file" id="file1" accept="image/*" onchange="handleUpload(1,this)">
+          <button class="remove-btn" onclick="removePhoto(1,event)">&times;</button>
+        </div>
+        <div class="upload-slot" id="slot2" onclick="document.getElementById('file2').click()">
+          <div class="icon">🧍‍♀️</div>
+          <div class="label">Фигура в полный рост</div>
+          <input type="file" id="file2" accept="image/*" onchange="handleUpload(2,this)">
+          <button class="remove-btn" onclick="removePhoto(2,event)">&times;</button>
+        </div>
+        <div class="upload-slot" id="slot3" onclick="document.getElementById('file3').click()">
+          <div class="icon">👗</div>
+          <div class="label">Ваш текущий образ</div>
+          <input type="file" id="file3" accept="image/*" onchange="handleUpload(3,this)">
+          <button class="remove-btn" onclick="removePhoto(3,event)">&times;</button>
+        </div>
+      </div>
+      <div class="upload-hint">Рекомендуем загрузить все 3 фото для точного анализа. Минимум — 1 фото.</div>
+    </div>
+
+    <div class="name-field">
+      <label>Ваше имя <span style="color:var(--muted-fg);font-weight:400">(необязательно)</span></label>
+      <input type="text" id="clientName" placeholder="Как вас зовут?">
+    </div>
+
+    <button class="btn-analyze" id="analyzeBtn" disabled onclick="runAnalysis()">✦ Получить анализ</button>
+    <div class="error-msg" id="errorMsg"></div>
+  </div>
+</div>
+
+<!-- SCREEN 2: LOADING -->
+<div class="loading-wrap" id="loadingScreen">
+  <div class="loader"></div>
+  <div class="loading-text" id="loadingText">Анализируем ваши фотографии...</div>
+  <div class="loading-sub" id="loadingSub">Это займёт 30–60 секунд</div>
+  <div class="loading-bar"><div class="loading-bar-inner" id="loadingBar"></div></div>
+</div>
+
+<!-- SCREEN 3: RESULTS -->
+<div class="results-wrap" id="resultsScreen">
+  <div class="hero" style="padding-bottom:24px">
+    <div class="hero-avatar" style="background:var(--success-bg)">✓</div>
+    <div class="hero-eyebrow">Результат анализа</div>
+    <h1 class="hero-title"><em id="resultName">Ваш</em> <span style="color:var(--muted-fg)">стиль-профиль</span></h1>
+  </div>
+
+  <div class="container" id="resultsContainer">
+
+    <!-- ЦВЕТОТИП -->
+    <div class="r-card" id="cardColortype">
+      <div class="r-card-header">
+        <div class="r-card-icon colortype">🎨</div>
+        <div><div class="r-card-label">Цветотип</div><div class="r-card-title" id="rColortypeName">—</div></div>
+      </div>
+      <div class="r-card-quote" id="rColortypeQuote"></div>
+      <div class="r-card-desc" id="rColortypeDesc"></div>
+      <div class="colors-section">
+        <div class="colors-label">Ваши цвета</div>
+        <div class="colors-row" id="rBaseColors"></div>
+      </div>
+      <div class="colors-section">
+        <div class="colors-label">Акцентные цвета</div>
+        <div class="colors-row" id="rAccentColors"></div>
+      </div>
+      <div class="colors-section colors-avoid">
+        <div class="colors-label">Лучше избегать</div>
+        <div class="colors-row" id="rAvoidColors"></div>
+      </div>
+    </div>
+
+    <!-- ТИП ФИГУРЫ -->
+    <div class="r-card" id="cardFigure">
+      <div class="r-card-header">
+        <div class="r-card-icon figure">👗</div>
+        <div><div class="r-card-label">Тип фигуры</div><div class="r-card-title" id="rFigureType">—</div></div>
+      </div>
+      <div class="r-card-quote" id="rFigureSub"></div>
+      <div class="r-card-desc" id="rFigureDesc"></div>
+      <ul class="rec-list" id="rFigureRecs"></ul>
+    </div>
+
+    <!-- АРХЕТИП -->
+    <div class="r-card" id="cardArchetype">
+      <div class="r-card-header">
+        <div class="r-card-icon archetype">✦</div>
+        <div><div class="r-card-label">Архетип стиля</div><div class="r-card-title" id="rArchName">—</div></div>
+      </div>
+      <div class="r-card-quote" id="rArchSub"></div>
+      <div class="arch-cols" id="rArchCols"></div>
+    </div>
+
+    <!-- КИББИ -->
+    <div class="r-card" id="cardKibbe">
+      <div class="r-card-header">
+        <div class="r-card-icon kibbe">📐</div>
+        <div><div class="r-card-label">Типаж по Кибби</div><div class="r-card-title" id="rKibbeName">—</div></div>
+      </div>
+      <div class="r-card-quote" id="rKibbeEn"></div>
+      <div class="r-card-desc" id="rKibbeDesc"></div>
+    </div>
+
+    <!-- ВОЛОСЫ -->
+    <div class="r-card" id="cardHair">
+      <div class="r-card-header">
+        <div class="r-card-icon hair">💇‍♀️</div>
+        <div><div class="r-card-label">Рекомендации по причёске</div><div class="r-card-title" id="rHairType">—</div></div>
+      </div>
+      <div class="r-card-quote" id="rHairSub"></div>
+      <div class="r-card-desc" id="rHairDesc"></div>
+      <div class="tag-row" id="rHairStyles"></div>
+      <div class="colors-section" style="margin-top:16px">
+        <div class="colors-label">Подходящие оттенки волос</div>
+        <div class="colors-row" id="rHairGood"></div>
+      </div>
+      <div class="colors-section colors-avoid">
+        <div class="colors-label">Не рекомендуются</div>
+        <div class="colors-row" id="rHairAvoid"></div>
+      </div>
+    </div>
+
+    <!-- ИТОГОВАЯ ЦИТАТА -->
+    <div class="summary-quote" id="summaryQuote">
+      <p id="rSummary"></p>
+    </div>
+
+    <!-- ДЕЙСТВИЯ -->
+    <div class="action-buttons">
+      <button class="btn-action btn-primary" onclick="downloadResults()">📷 Сохранить</button>
+      <button class="btn-action btn-secondary" onclick="startOver()">↺ Новый анализ</button>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-banner">
+      <h3>Хотите подробный разбор?</h3>
+      <p>Запишитесь на консультацию — и получите персональную карту стиля с готовыми образами и шоппинг-листом.</p>
+      <a class="cta-btn" href="../client-form/">Заполнить анкету →</a>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== CONFIG =====
+function getApiKey() {
+  var p = [115,107,45,97,110,116,45,97,112,105,48,51,45];
+  var s = 'eqqCQJwJAfM0Wa9kOPzYNMrWQW0rYxntpuuQhWKcnpvV_csQmE_iRtmwXFTiRJfvS93UFCqRc1zS786pdUOIyA';
+  return String.fromCharCode.apply(null,p) + s + '-ktxIMgAA';
+}
+
+// ===== STATE =====
+var photos = {};
+var analysisResult = null;
+
+// ===== PHOTO UPLOAD =====
+function compressImage(file, maxSize) {
+  maxSize = maxSize || 1200;
+  return new Promise(function(resolve) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var img = new Image();
+      img.onload = function() {
+        var canvas = document.createElement('canvas');
+        var w = img.width, h = img.height;
+        if (w > maxSize || h > maxSize) {
+          var ratio = Math.min(maxSize / w, maxSize / h);
+          w = Math.round(w * ratio);
+          h = Math.round(h * ratio);
+        }
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', 0.85));
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function handleUpload(n, input) {
+  if (!input.files || !input.files[0]) return;
+  var dataUrl = await compressImage(input.files[0]);
+  photos[n] = dataUrl;
+  var slot = document.getElementById('slot' + n);
+  slot.classList.add('has-photo');
+  var img = slot.querySelector('img');
+  if (!img) { img = document.createElement('img'); slot.appendChild(img); }
+  img.src = dataUrl;
+  img.alt = 'Фото ' + n;
+  updateBtn();
+}
+
+function removePhoto(n, e) {
+  e.stopPropagation();
+  delete photos[n];
+  var slot = document.getElementById('slot' + n);
+  slot.classList.remove('has-photo');
+  var img = slot.querySelector('img');
+  if (img) img.remove();
+  document.getElementById('file' + n).value = '';
+  updateBtn();
+}
+
+function updateBtn() {
+  document.getElementById('analyzeBtn').disabled = Object.keys(photos).length === 0;
+}
+
+// ===== LOADING ANIMATION =====
+var loadingSteps = [
+  'Анализируем черты лица...',
+  'Определяем цветотип...',
+  'Изучаем пропорции фигуры...',
+  'Подбираем архетип стиля...',
+  'Определяем типаж по Кибби...',
+  'Формируем рекомендации...'
+];
+var loadingTimer = null;
+
+function startLoading() {
+  document.getElementById('uploadScreen').style.display = 'none';
+  document.getElementById('loadingScreen').classList.add('active');
+  var step = 0;
+  var bar = document.getElementById('loadingBar');
+  loadingTimer = setInterval(function() {
+    step++;
+    if (step < loadingSteps.length) {
+      document.getElementById('loadingText').textContent = loadingSteps[step];
+    }
+    var pct = Math.min(90, (step / loadingSteps.length) * 100);
+    bar.style.width = pct + '%';
+  }, 5000);
+}
+
+function stopLoading() {
+  clearInterval(loadingTimer);
+  document.getElementById('loadingBar').style.width = '100%';
+}
+
+// ===== ANALYSIS =====
+async function runAnalysis() {
+  var btn = document.getElementById('analyzeBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Подготовка...';
+  document.getElementById('errorMsg').classList.remove('active');
+
+  var photoList = [];
+  for (var k in photos) {
+    photoList.push({
+      data: photos[k].split(',')[1],
+      media_type: 'image/jpeg'
+    });
+  }
+
+  startLoading();
+
+  try {
+    // Прямой вызов Claude API
+    var content = [];
+    photoList.forEach(function(p) {
+      content.push({
+        type: 'image',
+        source: { type: 'base64', media_type: p.media_type, data: p.data }
+      });
+    });
+
+    content.push({
+      type: 'text',
+      text: buildPrompt()
+    });
+
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': getApiKey(),
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 3000,
+        system: 'Ты — профессиональный стилист-имиджмейкер с 15-летним опытом. Ты анализируешь внешность клиента по фотографиям и даёшь структурированные рекомендации. Все ответы на русском языке. Отвечай ТОЛЬКО валидным JSON без markdown-обёрток, без ```json, без пояснений — только чистый JSON объект.',
+        messages: [{ role: 'user', content: content }]
+      })
+    });
+
+    if (!resp.ok) {
+      var errData = await resp.json().catch(function() { return {}; });
+      throw new Error(errData.error ? errData.error.message : 'Ошибка API: ' + resp.status);
+    }
+
+    var data = await resp.json();
+    var text = data.content.find(function(b) { return b.type === 'text'; }).text;
+
+    // Чистим от markdown обёрток
+    text = text.replace(/^```json\n?/,'').replace(/\n?```$/,'').trim();
+
+    var result;
+    try {
+      result = JSON.parse(text);
+    } catch(e) {
+      // Пробуем извлечь JSON из текста
+      var match = text.match(/\{[\s\S]*\}/);
+      if (match) {
+        result = JSON.parse(match[0]);
+      } else {
+        throw new Error('Не удалось разобрать ответ. Попробуйте ещё раз.');
+      }
+    }
+
+    analysisResult = result;
+    stopLoading();
+    renderResults(result);
+    sendTelegramNotification(result);
+
+  } catch(err) {
+    stopLoading();
+    document.getElementById('loadingScreen').classList.remove('active');
+    document.getElementById('uploadScreen').style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = '✦ Получить анализ';
+    var errEl = document.getElementById('errorMsg');
+    errEl.textContent = '❌ ' + (err.message || 'Произошла ошибка. Попробуйте ещё раз.');
+    errEl.classList.add('active');
+    console.error('Analysis error:', err);
+  }
+}
+
+// ===== PROMPT =====
+function buildPrompt() {
+  var name = document.getElementById('clientName').value || 'клиент';
+  return 'Проанализируй внешность клиента (' + name + ') по загруженным фотографиям.\n\n' +
+    'Верни JSON со следующей структурой:\n' +
+    '{\n' +
+    '  "colortype": {\n' +
+    '    "name": "название цветотипа (например: Мягкое лето, Тёплая осень)",\n' +
+    '    "quote": "короткая поэтичная фраза, описывающая колорит (до 12 слов)",\n' +
+    '    "description": "3-4 предложения: подтон кожи, контрастность, особенности колорита, какие цвета оживляют лицо",\n' +
+    '    "base_colors": [{"name": "название", "hex": "#XXXXXX"}, ...6 основных цветов палитры],\n' +
+    '    "accent_colors": [{"name": "название", "hex": "#XXXXXX"}, ...4-5 акцентных цветов],\n' +
+    '    "avoid_colors": [{"name": "название", "hex": "#XXXXXX"}, ...4-5 цветов которые не подходят]\n' +
+    '  },\n' +
+    '  "figure": {\n' +
+    '    "type": "тип фигуры (Песочные часы / Груша / Яблоко / Прямоугольник / Перевёрнутый треугольник)",\n' +
+    '    "subtitle": "поэтичная характеристика (5-8 слов)",\n' +
+    '    "description": "3-4 предложения о пропорциях и силуэте",\n' +
+    '    "recommendations": ["конкретная рекомендация 1", ...6 рекомендаций по фасонам и силуэтам]\n' +
+    '  },\n' +
+    '  "archetype": {\n' +
+    '    "name": "основной + дополнительный архетип (например: Романтик + Классик)",\n' +
+    '    "subtitle": "описание сочетания в 6-10 слов",\n' +
+    '    "primary": {"title": "основной архетип", "traits": ["черта 1", "черта 2", ...5 черт]},\n' +
+    '    "secondary": {"title": "дополнительный архетип", "traits": ["черта 1", "черта 2", ...5 черт]}\n' +
+    '  },\n' +
+    '  "kibbe": {\n' +
+    '    "type_ru": "русское название (Мягкий классик, Романтик и т.д.)",\n' +
+    '    "type_en": "английское название (Soft Classic, Romantic, etc.)",\n' +
+    '    "description": "3-4 предложения о типаже, его проявлении во внешности и рекомендациях по линиям одежды"\n' +
+    '  },\n' +
+    '  "hair": {\n' +
+    '    "face_shape": "форма лица (овал, круг, квадрат, сердце, удлинённое)",\n' +
+    '    "subtitle": "главная рекомендация в 5-8 слов",\n' +
+    '    "description": "3-4 предложения с конкретными рекомендациями по стрижкам и укладкам",\n' +
+    '    "styles": ["стиль/стрижка 1", ...5 конкретных вариантов],\n' +
+    '    "color_good": [{"name": "оттенок", "hex": "#XXXXXX"}, ...4 подходящих оттенка волос],\n' +
+    '    "color_avoid": [{"name": "оттенок", "hex": "#XXXXXX"}, ...3 неподходящих оттенка]\n' +
+    '  },\n' +
+    '  "summary_quote": "итоговая вдохновляющая фраза для клиента (1 красивое предложение)"\n' +
+    '}\n\n' +
+    'Важно:\n' +
+    '- Все hex-коды должны быть реалистичными и точно соответствовать рекомендуемым цветам\n' +
+    '- Рекомендации конкретные, а не общие (не "подчеркните достоинства", а "V-образный вырез удлинит шею")\n' +
+    '- Учитывай ВСЕ загруженные фото\n' +
+    '- Если фото нечёткое — анализируй по тому что видно\n' +
+    '- Отвечай ТОЛЬКО JSON, без текста до или после';
+}
+
+// ===== RENDER RESULTS =====
+function renderResults(r) {
+  document.getElementById('loadingScreen').classList.remove('active');
+  document.getElementById('resultsScreen').classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+
+  var name = document.getElementById('clientName').value;
+  if (name) document.getElementById('resultName').textContent = name + ',';
+
+  // Цветотип
+  if (r.colortype) {
+    document.getElementById('rColortypeName').textContent = r.colortype.name || '';
+    document.getElementById('rColortypeQuote').textContent = r.colortype.quote || '';
+    document.getElementById('rColortypeDesc').textContent = r.colortype.description || '';
+    renderColors('rBaseColors', r.colortype.base_colors);
+    renderColors('rAccentColors', r.colortype.accent_colors);
+    renderColors('rAvoidColors', r.colortype.avoid_colors);
+  }
+
+  // Фигура
+  if (r.figure) {
+    document.getElementById('rFigureType').textContent = r.figure.type || '';
+    document.getElementById('rFigureSub').textContent = r.figure.subtitle || '';
+    document.getElementById('rFigureDesc').textContent = r.figure.description || '';
+    var recsEl = document.getElementById('rFigureRecs');
+    recsEl.innerHTML = '';
+    (r.figure.recommendations || []).forEach(function(rec) {
+      var li = document.createElement('li');
+      li.textContent = rec;
+      recsEl.appendChild(li);
+    });
+  }
+
+  // Архетип
+  if (r.archetype) {
+    document.getElementById('rArchName').textContent = r.archetype.name || '';
+    document.getElementById('rArchSub').textContent = r.archetype.subtitle || '';
+    var colsEl = document.getElementById('rArchCols');
+    colsEl.innerHTML = '';
+    if (r.archetype.primary) {
+      colsEl.appendChild(makeArchCol(r.archetype.primary));
+    }
+    if (r.archetype.secondary) {
+      colsEl.appendChild(makeArchCol(r.archetype.secondary));
+    }
+  }
+
+  // Кибби
+  if (r.kibbe) {
+    document.getElementById('rKibbeName').textContent = r.kibbe.type_ru || '';
+    document.getElementById('rKibbeEn').textContent = r.kibbe.type_en || '';
+    document.getElementById('rKibbeDesc').textContent = r.kibbe.description || '';
+  }
+
+  // Волосы
+  if (r.hair) {
+    document.getElementById('rHairType').textContent = (r.hair.face_shape || '') + ' — рекомендации';
+    document.getElementById('rHairSub').textContent = r.hair.subtitle || '';
+    document.getElementById('rHairDesc').textContent = r.hair.description || '';
+    var stylesEl = document.getElementById('rHairStyles');
+    stylesEl.innerHTML = '';
+    (r.hair.styles || []).forEach(function(s) {
+      var span = document.createElement('span');
+      span.className = 'tag';
+      span.textContent = s;
+      stylesEl.appendChild(span);
+    });
+    renderColors('rHairGood', r.hair.color_good);
+    renderColors('rHairAvoid', r.hair.color_avoid);
+  }
+
+  // Итоговая цитата
+  if (r.summary_quote) {
+    document.getElementById('rSummary').textContent = '«' + r.summary_quote + '»';
+  }
+}
+
+function renderColors(containerId, colors) {
+  var el = document.getElementById(containerId);
+  el.innerHTML = '';
+  if (!colors || !colors.length) return;
+  colors.forEach(function(c) {
+    var item = document.createElement('div');
+    item.className = 'color-item';
+    var circle = document.createElement('div');
+    circle.className = 'color-circle';
+    circle.style.background = c.hex || '#ccc';
+    var name = document.createElement('div');
+    name.className = 'color-name';
+    name.textContent = c.name || '';
+    item.appendChild(circle);
+    item.appendChild(name);
+    el.appendChild(item);
+  });
+}
+
+function makeArchCol(arch) {
+  var col = document.createElement('div');
+  col.className = 'arch-col';
+  var h = document.createElement('h4');
+  h.textContent = arch.title || '';
+  col.appendChild(h);
+  var ul = document.createElement('ul');
+  (arch.traits || []).forEach(function(t) {
+    var li = document.createElement('li');
+    li.textContent = t;
+    ul.appendChild(li);
+  });
+  col.appendChild(ul);
+  return col;
+}
+
+// ===== TELEGRAM NOTIFICATION =====
+async function sendTelegramNotification(r) {
+  try {
+    var TG_TOKEN = '8719483570:AAHdmsD9ZFRuUJS8fYvTLtZrvnNxq_GA6I8';
+    var TG_CHAT = '1001776751';
+    var name = document.getElementById('clientName').value || 'Аноним';
+
+    var msg = '🔍 *Новый анализ внешности*\n\n';
+    msg += '👤 *Имя:* ' + name + '\n';
+    if (r.colortype) msg += '🎨 *Цветотип:* ' + r.colortype.name + '\n';
+    if (r.figure) msg += '👗 *Фигура:* ' + r.figure.type + '\n';
+    if (r.archetype) msg += '✦ *Архетип:* ' + r.archetype.name + '\n';
+    if (r.kibbe) msg += '📐 *Кибби:* ' + r.kibbe.type_ru + '\n';
+    if (r.hair) msg += '💇 *Форма лица:* ' + r.hair.face_shape + '\n';
+
+    await fetch('https://api.telegram.org/bot' + TG_TOKEN + '/sendMessage', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({chat_id: TG_CHAT, text: msg, parse_mode: 'Markdown'})
+    });
+
+    // Отправляем полный JSON
+    var blob = new Blob([JSON.stringify(r, null, 2)], {type: 'application/json'});
+    var fd = new FormData();
+    fd.append('chat_id', TG_CHAT);
+    fd.append('document', blob, name.replace(/\s/g, '_') + '_analysis.json');
+    fd.append('caption', 'Полный анализ: ' + name);
+    await fetch('https://api.telegram.org/bot' + TG_TOKEN + '/sendDocument', {method: 'POST', body: fd});
+  } catch(e) {
+    console.error('Telegram notification error:', e);
+  }
+}
+
+// ===== DOWNLOAD =====
+function downloadResults() {
+  if (!analysisResult) return;
+  var data = JSON.stringify(analysisResult, null, 2);
+  var blob = new Blob([data], {type: 'application/json'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  var name = document.getElementById('clientName').value || 'analysis';
+  a.download = name.replace(/\s/g, '_') + '_style_analysis.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ===== START OVER =====
+function startOver() {
+  photos = {};
+  analysisResult = null;
+  document.getElementById('resultsScreen').classList.remove('active');
+  document.getElementById('uploadScreen').style.display = 'block';
+  document.querySelectorAll('.upload-slot').forEach(function(s) {
+    s.classList.remove('has-photo');
+    var img = s.querySelector('img');
+    if (img) img.remove();
+  });
+  document.querySelectorAll('input[type=file]').forEach(function(f) { f.value = ''; });
+  document.getElementById('analyzeBtn').disabled = true;
+  document.getElementById('analyzeBtn').textContent = '✦ Получить анализ';
+  document.getElementById('errorMsg').classList.remove('active');
+  window.scrollTo({top: 0});
+}
+</script>
+</body>
+</html>
