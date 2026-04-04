@@ -444,23 +444,43 @@ async function submitForm(){
   setStatus('status-sending','⏳ Отправляем вашу анкету стилисту...');
 
   try{
-    var res=await fetch('/api/submit',{
+    // Отправляем напрямую в Telegram
+    var TG_TOKEN='8719483570:AAHdmsD9ZFRuUJS8fYvTLtZrvnNxq_GA6I8';
+    var TG_CHAT='1001776751';
+
+    // Краткое сообщение
+    var msg='📋 *Новая анкета*\n\n';
+    msg+='👤 *Имя:* '+data.meta.client+'\n';
+    msg+='📞 *Контакт:* '+data.meta.contact+'\n';
+    msg+='🏙 *Город:* '+(data.meta.city||'—')+'\n';
+    msg+='🎯 *Услуга:* '+(data.meta.service||'—')+'\n';
+    msg+='💰 *Бюджет:* '+(data.lifestyle.budget||'—')+'\n';
+    msg+='───────────────\n';
+    msg+='*Запрос:* '+(data.intake.trigger||'—')+'\n';
+    msg+='*Цель:* '+(data.intake.goal||'—')+'\n';
+    msg+='*Желаемый образ:* '+(data.psychology.desired_image||'—')+'\n';
+    msg+='*Утро:* '+(data.psychology.morning_feeling||'—')+'\n';
+    msg+='*Тело (1-10):* '+(data.psychology.body_score||'—')+'\n';
+    if(p.notes)msg+='───────────────\n📝 *Заметки:* '+p.notes+'\n';
+
+    // Отправляем текст
+    await fetch('https://api.telegram.org/bot'+TG_TOKEN+'/sendMessage',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(data)
+      body:JSON.stringify({chat_id:TG_CHAT,text:msg,parse_mode:'Markdown'})
     });
-    var result=await res.json();
-    if(result.ok){
-      if(result.telegram){
-        setStatus('status-ok','✅ Анкета отправлена! Екатерина получит её в Telegram.');
-      } else {
-        setStatus('status-ok','✅ Анкета сохранена! Екатерина свяжется с вами.');
-      }
-    } else {
-      throw new Error('server error');
-    }
+
+    // Отправляем полный JSON файлом
+    var jsonBlob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    var fd=new FormData();
+    fd.append('chat_id',TG_CHAT);
+    fd.append('document',jsonBlob,data.meta.client.replace(/\s/g,'_')+'_anketa.json');
+    fd.append('caption','Полная анкета: '+data.meta.client);
+    await fetch('https://api.telegram.org/bot'+TG_TOKEN+'/sendDocument',{method:'POST',body:fd});
+
+    setStatus('status-ok','✅ Анкета отправлена! Екатерина получит её в Telegram.');
   }catch(e){
-    setStatus('status-err','Не удалось отправить автоматически. Анкета сохранена, мы свяжемся с вами.');
+    setStatus('status-err','Не удалось отправить автоматически. Пожалуйста, напишите нам напрямую.');
     console.error('Submit error:', e);
   }
 }
